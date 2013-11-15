@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestRecord xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Results />
+  <Tests>
+    <TestRecord Name="NBass">
+      <Results />
+      <Tests>
+        <TestRecord Name="Tests">
+          <Results />
+          <Tests>
+            <TestRecord Name="ChannelTests">
+              <Results>
+                <UnitTestResult>
+                  <TestDate>2013-11-08T10:32:25</TestDate>
+                  <Status />
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-11-08T11:14:47</TestDate>
+                  <Status />
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-11-08T11:16:26</TestDate>
+                  <Status />
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-11-08T11:16:32</TestDate>
+                  <Status />
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                </UnitTestResult>
+                <UnitTestResult>
+                  <TestDate>2013-11-08T11:16:47</TestDate>
+                  <Status />
+                  <Passed>0</Passed>
+                  <Errors>0</Errors>
+                  <Failures>0</Failures>
+                  <Inconclusive>0</Inconclusive>
+                  <NotRunnable>0</NotRunnable>
+                  <Skipped>0</Skipped>
+                  <Ignored>0</Ignored>
+                  <Time />
+                </UnitTestResult>
+              </Results>
+              <Tests>
+                <TestRecord Name="Some">
+                  <Results>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:17:28</TestDate>
+                      <Status />
+                      <Passed>1</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>Test successful
+
+Execution time: 0.01ms</Message>
+                      <ConsoleOutput>mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+nunit.core, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+NUnitRunner, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+nunit.core.interfaces, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+NBass.Tests, Version=1.0.5060.20320, Culture=neutral, PublicKeyToken=null
+nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+</ConsoleOutput>
+                      <ConsoleError />
+                    </UnitTestResult>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:17:47</TestDate>
+                      <Status />
+                      <Passed>1</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>Test successful
+
+Execution time: 0.04ms</Message>
+                      <ConsoleOutput>mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+nunit.core, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+NUnitRunner, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+nunit.core.interfaces, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+NBass.Tests, Version=1.0.5060.20333, Culture=neutral, PublicKeyToken=null
+nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+</ConsoleOutput>
+                      <ConsoleError />
+                    </UnitTestResult>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:18:11</TestDate>
+                      <Status>Failure</Status>
+                      <Passed>0</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>Object reference not set to an instance of an object</Message>
+                      <StackTrace>
+Server stack trace: 
+  at NUnit.Util.ResultSummarizer.Summarize (NUnit.Core.TestResult result) [0x00000] in &lt;filename unknown&gt;:0 
+  at NUnit.Util.ResultSummarizer..ctor (NUnit.Core.TestResult result) [0x00000] in &lt;filename unknown&gt;:0 
+  at MonoDevelop.NUnit.External.EventListenerWrapper.GetLocalTestResult (NUnit.Core.TestResult t) [0x00000] in &lt;filename unknown&gt;:0 
+  at (wrapper remoting-invoke-with-check) MonoDevelop.NUnit.External.EventListenerWrapper:GetLocalTestResult (NUnit.Core.TestResult)
+  at MonoDevelop.NUnit.External.ExternalTestRunner.Run (IRemoteEventListener listener, ITestFilter filter, System.String path, System.String suiteName, System.Collections.Generic.List`1 supportAssemblies, System.String testRunnerType, System.String testRunnerAssembly) [0x00000] in &lt;filename unknown&gt;:0 
+  at (wrapper managed-to-native) System.Runtime.Remoting.RemotingServices:InternalExecute (System.Reflection.MethodBase,object,object[],object[]&amp;)
+  at System.Runtime.Remoting.RemotingServices.InternalExecuteMessage (System.MarshalByRefObject target, IMethodCallMessage reqMsg) [0x000c2] in C:\cygwin\sources\mono\mcs\class\corlib\System.Runtime.Remoting\RemotingServices.cs:151 
+
+Exception rethrown at [0]: 
+   at MonoDevelop.NUnit.NUnitAssemblyTestSuite.RunUnitTest(UnitTest test, String suiteName, String pathName, String testName, TestContext testContext)
+   at MonoDevelop.NUnit.NUnitTestCase.OnRun(TestContext testContext)
+   at MonoDevelop.NUnit.UnitTest.Run(TestContext testContext)</StackTrace>
+                    </UnitTestResult>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:18:58</TestDate>
+                      <Status>Failure</Status>
+                      <Passed>0</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>An existing connection was forcibly closed by the remote host</Message>
+                      <StackTrace>
+Server stack trace: 
+   at System.Net.Sockets.Socket.Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Runtime.Remoting.Channels.SocketStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.Runtime.Remoting.Channels.SocketHandler.ReadFromSocket(Byte[] buffer, Int32 offset, Int32 count)
+   at System.Runtime.Remoting.Channels.SocketHandler.Read(Byte[] buffer, Int32 offset, Int32 count)
+   at System.Runtime.Remoting.Channels.SocketHandler.ReadAndMatchFourBytes(Byte[] buffer)
+   at System.Runtime.Remoting.Channels.Tcp.TcpSocketHandler.ReadAndMatchPreamble()
+   at System.Runtime.Remoting.Channels.Tcp.TcpSocketHandler.ReadVersionAndOperation(UInt16&amp; operation)
+   at System.Runtime.Remoting.Channels.Tcp.TcpClientSocketHandler.ReadHeaders()
+   at System.Runtime.Remoting.Channels.Tcp.TcpClientTransportSink.ProcessMessage(IMessage msg, ITransportHeaders requestHeaders, Stream requestStream, ITransportHeaders&amp; responseHeaders, Stream&amp; responseStream)
+   at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage(IMessage msg)
+
+Exception rethrown at [0]: 
+   at MonoDevelop.NUnit.NUnitAssemblyTestSuite.RunUnitTest(UnitTest test, String suiteName, String pathName, String testName, TestContext testContext)
+   at MonoDevelop.NUnit.NUnitTestCase.OnRun(TestContext testContext)
+   at MonoDevelop.NUnit.UnitTest.Run(TestContext testContext)</StackTrace>
+                    </UnitTestResult>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:19:54</TestDate>
+                      <Status />
+                      <Passed>1</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>Test successful
+
+Execution time: 0.02ms</Message>
+                      <ConsoleOutput>mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+Mono.Security, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756
+nunit.core, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+NUnitRunner, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+nunit.core.interfaces, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+MonoDevelop.NUnit, Version=2.6.0.0, Culture=neutral, PublicKeyToken=null
+I18N, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756
+I18N.West, Version=4.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756
+NBass.Tests, Version=1.0.5060.20396, Culture=neutral, PublicKeyToken=null
+nunit.framework, Version=2.6.3.13283, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77
+System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
+</ConsoleOutput>
+                      <ConsoleError />
+                    </UnitTestResult>
+                    <UnitTestResult>
+                      <TestDate>2013-11-08T11:20:14</TestDate>
+                      <Status>Failure</Status>
+                      <Passed>0</Passed>
+                      <Errors>0</Errors>
+                      <Failures>0</Failures>
+                      <Inconclusive>0</Inconclusive>
+                      <NotRunnable>0</NotRunnable>
+                      <Skipped>0</Skipped>
+                      <Ignored>0</Ignored>
+                      <Time />
+                      <Message>An existing connection was forcibly closed by the remote host</Message>
+                      <StackTrace>
+Server stack trace: 
+   at System.Net.Sockets.Socket.Receive(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Runtime.Remoting.Channels.SocketStream.Read(Byte[] buffer, Int32 offset, Int32 size)
+   at System.Runtime.Remoting.Channels.SocketHandler.ReadFromSocket(Byte[] buffer, Int32 offset, Int32 count)
+   at System.Runtime.Remoting.Channels.SocketHandler.Read(Byte[] buffer, Int32 offset, Int32 count)
+   at System.Runtime.Remoting.Channels.SocketHandler.ReadAndMatchFourBytes(Byte[] buffer)
+   at System.Runtime.Remoting.Channels.Tcp.TcpSocketHandler.ReadAndMatchPreamble()
+   at System.Runtime.Remoting.Channels.Tcp.TcpSocketHandler.ReadVersionAndOperation(UInt16&amp; operation)
+   at System.Runtime.Remoting.Channels.Tcp.TcpClientSocketHandler.ReadHeaders()
+   at System.Runtime.Remoting.Channels.Tcp.TcpClientTransportSink.ProcessMessage(IMessage msg, ITransportHeaders requestHeaders, Stream requestStream, ITransportHeaders&amp; responseHeaders, Stream&amp; responseStream)
+   at System.Runtime.Remoting.Channels.BinaryClientFormatterSink.SyncProcessMessage(IMessage msg)
+
+Exception rethrown at [0]: 
+   at MonoDevelop.NUnit.NUnitAssemblyTestSuite.RunUnitTest(UnitTest test, String suiteName, String pathName, String testName, TestContext testContext)
+   at MonoDevelop.NUnit.NUnitTestCase.OnRun(TestContext testContext)
+   at MonoDevelop.NUnit.UnitTest.Run(TestContext testContext)</StackTrace>
+                    </UnitTestResult>
+                  </Results>
+                </TestRecord>
+              </Tests>
+            </TestRecord>
+          </Tests>
+        </TestRecord>
+      </Tests>
+    </TestRecord>
+  </Tests>
+</TestRecord>
