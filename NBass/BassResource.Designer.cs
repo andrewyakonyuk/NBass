@@ -61,6 +61,15 @@ namespace NBass {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Channel was disposed.
+        /// </summary>
+        internal static string ChannelDisposedMessage {
+            get {
+                return ResourceManager.GetString("ChannelDisposedMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Already Initialized.
         /// </summary>
         internal static string Error_Already {

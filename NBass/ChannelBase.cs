@@ -15,7 +15,7 @@ namespace NBass
     /// <summary>
     /// ChannelBase. The class is not used directly.
     /// </summary>
-    public abstract class ChannelBase : IChannel, IDisposable
+    public abstract class ChannelBase : IChannel, IDisposable, ICloneable
     {
         #region Field
 
@@ -163,9 +163,8 @@ namespace NBass
 
         protected virtual void CheckDisposed()
         {
-            //TODO add error message in channel in resource
             if (IsDisposed)
-                throw new ObjectDisposedException(ToString());
+                throw new ObjectDisposedException(BassResource.ChannelDisposedMessage);
         }
 
         protected virtual void Dispose(bool disposing)
@@ -525,5 +524,14 @@ namespace NBass
         }
 
         #endregion IChannel Members
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
     }
 }

@@ -123,7 +123,6 @@ namespace NBass.Backstage
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetAttribute(IntPtr handle, int attrib, float value);
 
-        //OK return dword
         [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_ChannelSetDevice")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetDevice(IntPtr handle, int device);
@@ -146,7 +145,6 @@ namespace NBass.Backstage
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetLink(IntPtr handle, IntPtr chan);
 
-        //ok retun bool
         // handle : Channel handle (HCHANNEL/HMUSIC/HSTREAM, or CDCHANNEL)
         // pos    : the position
         //          if HCHANNEL: position in bytes
@@ -158,7 +156,7 @@ namespace NBass.Backstage
         /// </summary>
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelSetPosition")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetPosition(IntPtr handle, long pos, int bassMode);//OK retrn bool
+        public static extern bool SetPosition(IntPtr handle, long pos, int bassMode);
 
         //OK return bool
 
@@ -175,25 +173,8 @@ namespace NBass.Backstage
 
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelStop")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool Stop(IntPtr handle);//OK return bool
+        public static extern bool Stop(IntPtr handle);
 
-        //OK
-
-        //OK return dword
-
-        //TODO: OK return dword
-
-        //TODO: OK retrun bool
-
-        //TODO: OK return dword
-
-        //TODO: Make callback
-
-        //TODO: OK,
-
-        //TODO: OK
-
-        //TODO: OK return dword
         [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_ChannelGetInfo")]
         [return: MarshalAs(UnmanagedType.Bool)]
         internal static extern bool GetInfo(IntPtr handle, [In] [Out] ref Data data);
