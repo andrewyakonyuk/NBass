@@ -1,82 +1,105 @@
 ﻿using System;
-using System.Runtime.InteropServices;
+using NBass.Backstage;
 
 namespace NBass
 {
     /// <summary>
-    /// Summary description for BASSException.
+    /// Error codes returned by BASS_GetErrorCode()
     /// </summary>
-    public class BassException : Exception
+    public enum Error
     {
-        protected Error err;
+        BASS_OK = 0, // all is OK
+        MEM = 1, // memory error
+        FILEOPEN = 2, // can// t open the file
+        DRIVER = 3, // can// t find a free sound driver
+        BUFLOST = 4, // the sample buffer was lost - please report this!
+        HANDLE = 5, // invalid handle
+        FORMAT = 6, // unsupported format
+        POSITION = 7, // invalid playback position
+        INIT = 8, // BASS_Init has not been successfully called
+        START = 9, // BASS_Start has not been successfully called
+        INITCD = 10, // can// t initialize CD
+        CDINIT = 11, // BASS_CDInit has not been successfully called
+        NOCD = 12, // no CD in drive
+        CDTRACK = 13, // can// t play the selected CD track
+        ALREADY = 14, // already initialized
+        CDVOL = 15, // CD has no volume control
+        NOPAUSE = 16, // not paused
+        NOTAUDIO = 17, // not an audio track
+        NOCHAN = 18, // can// t get a free channel
+        ILLTYPE = 19, // an illegal type was specified
+        ILLPARAM = 20, // an illegal parameter was specified
+        NO3D = 21, // no 3D support
+        NOEAX = 22, // no EAX support
+        DEVICE = 23, // illegal device number
+        NOPLAY = 24, // not playing
+        FREQ = 25, // illegal sample rate
+        NOA3D = 26, // A3D.DLL is not installed
+        NOTFILE = 27, // the stream is not a file stream (WAV/MP3)
+        NOHW = 29, // no hardware voices available
+        EMPTY = 31, // the MOD music has no sequence data
+        NONET = 32, // no internet connection could be opened
+        CREATE = 33, // couldn// t create the file
+        NOFX = 34, // effects are not enabled
+        PLAYING = 35, // the channel is playing
+        NOTAVAIL = 37, // requested data is not available
+        DECODE = 38, // the channel is a "decoding channel"
+        DX = 39, // a sufficient DirectX version is not installed
+        TIMEOUT = 40, // connection timedout
+
+        /// <summary>
+        /// Unsupported file format
+        /// </summary>
+        FILEFORM,
+
+        /// <summary>
+        /// Unavailable speaker
+        /// </summary>
+        SPEAKER,
+
+        /// <summary>
+        /// Invalid BASS version (used by add-ons)
+        /// </summary>
+        VERSION,
+
+        /// <summary>
+        /// Codec is not available/supported
+        /// </summary>
+        CODEC,
+
+        /// <summary>
+        /// The channel/file has ended
+        /// </summary>
+        ENDED,
+
+        /// <summary>
+        /// The device is busy (eg. in "exclusive" use by another process)
+        /// </summary>
+        BUSY,
+
+        WMA_LICENSE = 1000,	// the file is protected
+        UNKNOWN = -1, // some other mystery error
+    }
+
+    [Serializable]
+    public sealed class BassException : Exception
+    {
+        private Error _error;
 
         public BassException()
             : this(GetErrorCode())
         {
         }
 
-        internal BassException(int code)
-            : base(GetErrorDescription((Error)code))
+        public BassException(int errorCode)
+            : base(GetErrorMessage((Error)errorCode))
         {
-            err = (Error)code;
+            _error = (Error)errorCode;
         }
 
-        // ***********************************************
-        // * Error codes returned by BASS_GetErrorCode() *
-        // ***********************************************
-        public enum Error
+        public BassException(int errorCode, Exception inner)
+            : base(GetErrorMessage((Error)errorCode), inner)
         {
-            BASS_OK = 0, // all is OK
-            MEM = 1, // memory error
-            FILEOPEN = 2, // can// t open the file
-            DRIVER = 3, // can// t find a free sound driver
-            BUFLOST = 4, // the sample buffer was lost - please report this!
-            HANDLE = 5, // invalid handle
-            FORMAT = 6, // unsupported format
-            POSITION = 7, // invalid playback position
-            INIT = 8, // BASS_Init has not been successfully called
-            START = 9, // BASS_Start has not been successfully called
-            INITCD = 10, // can// t initialize CD
-            CDINIT = 11, // BASS_CDInit has not been successfully called
-            NOCD = 12, // no CD in drive
-            CDTRACK = 13, // can// t play the selected CD track
-            ALREADY = 14, // already initialized
-            CDVOL = 15, // CD has no volume control
-            NOPAUSE = 16, // not paused
-            NOTAUDIO = 17, // not an audio track
-            NOCHAN = 18, // can// t get a free channel
-            ILLTYPE = 19, // an illegal type was specified
-            ILLPARAM = 20, // an illegal parameter was specified
-            NO3D = 21, // no 3D support
-            NOEAX = 22, // no EAX support
-            DEVICE = 23, // illegal device number
-            NOPLAY = 24, // not playing
-            FREQ = 25, // illegal sample rate
-            NOA3D = 26, // A3D.DLL is not installed
-            NOTFILE = 27, // the stream is not a file stream (WAV/MP3)
-            NOHW = 29, // no hardware voices available
-            EMPTY = 31, // the MOD music has no sequence data
-            NONET = 32, // no internet connection could be opened
-            CREATE = 33, // couldn// t create the file
-            NOFX = 34, // effects are not enabled
-            PLAYING = 35, // the channel is playing
-            NOTAVAIL = 37, // requested data is not available
-            DECODE = 38, // the channel is a "decoding channel"
-            DX = 39, // a sufficient DirectX version is not installed
-            TIMEOUT = 40, // connection timedout
-            WMA_LICENSE = 1000,	// the file is protected
-            UNKNOWN = -1, // some other mystery error
-        }
-
-        /// <summary>
-        /// Get an description for the error that occurred
-        /// </summary>
-        public string ErrorDescription
-        {
-            get
-            {
-                return GetErrorDescription(err);
-            }
         }
 
         /// <summary>
@@ -86,15 +109,16 @@ namespace NBass
         {
             get
             {
-                return err;
+                return _error;
             }
         }
-        internal static void Thrown()
+
+        public static void Throw()
         {
             throw new BassException();
         }
 
-        internal static void Thrown(Func<bool> action)
+        public static void ThrowIfTrue(Func<bool> action)
         {
             if (action())
             {
@@ -102,136 +126,150 @@ namespace NBass
             }
         }
 
-        protected static int GetErrorCode()
+        private static int GetErrorCode()
         {
-            return _ErrorGetCode();
+            return _BassException.GetErrorCode();
         }
 
-        protected static string GetErrorDescription(Error error)
+        private static string GetErrorMessage(Error error)
         {
             switch (error)
             {
                 case Error.BASS_OK:
-                    return "All is OK";
+                    return BassResource.Error_BassOk;
 
                 case Error.MEM:
-                    return "Memory Error";
+                    return BassResource.Error_Memory;
 
                 case Error.FILEOPEN:
-                    return "Can't Open the File";
+                    return BassResource.Error_FileOpen;
 
                 case Error.DRIVER:
-                    return "Can't Find a Free Sound Driver";
+                    return BassResource.Error_Driver;
 
                 case Error.BUFLOST:
-                    return "The Sample Buffer Was Lost - Please Report This!";
+                    return BassResource.Error_BufferLost;
 
                 case Error.HANDLE:
-                    return "Invalid Handle";
+                    return BassResource.Error_Handle;
 
                 case Error.FORMAT:
-                    return "Unsupported Format";
+                    return BassResource.Error_Format;
 
                 case Error.POSITION:
-                    return "Invalid Playback Position";
+                    return BassResource.Error_Position;
 
                 case Error.INIT:
-                    return "BASS.Init Has Not Been Successfully Called";
+                    return BassResource.Error_Init;
 
                 case Error.START:
-                    return "BASS_Start Has Not Been Successfully Called";
+                    return BassResource.Error_Start;
 
                 case Error.INITCD:
-                    return "Can't Initialize CD";
+                    return BassResource.Error_InitCD;
 
                 case Error.CDINIT:
-                    return "BASS_CDInit Has Not Been Successfully Called";
+                    return BassResource.Error_CDInit;
 
                 case Error.NOCD:
-                    return "No CD in drive";
+                    return BassResource.Error_NoCD;
 
                 case Error.CDTRACK:
-                    return "Can't Play the Selected CD Track";
+                    return BassResource.Error_CDTrack;
 
                 case Error.ALREADY:
-                    return "Already Initialized";
+                    return BassResource.Error_Already;
 
                 case Error.CDVOL:
-                    return "CD Has No Volume Control";
+                    return BassResource.Error_CDVolume;
 
                 case Error.NOPAUSE:
-                    return "Not Paused";
+                    return BassResource.Error_NoPause;
 
                 case Error.NOTAUDIO:
-                    return "Not An Audio Track";
+                    return BassResource.Error_NotAudio;
 
                 case Error.NOCHAN:
-                    return "Can't Get a Free Channel";
+                    return BassResource.Error_NoChannel;
 
                 case Error.ILLTYPE:
-                    return "An Illegal Type Was Specified";
+                    return BassResource.Error_IllType;
 
                 case Error.ILLPARAM:
-                    return "An Illegal Parameter Was Specified";
+                    return BassResource.Error_IllParam;
 
                 case Error.NO3D:
-                    return "No 3D Support";
+                    return BassResource.Error_No3d;
 
                 case Error.NOEAX:
-                    return "No EAX Support";
+                    return BassResource.Error_NoEAX;
 
                 case Error.DEVICE:
-                    return "Illegal Device Number";
+                    return BassResource.Error_Device;
 
                 case Error.NOPLAY:
-                    return "Not Playing";
+                    return BassResource.Error_NoPlay;
 
                 case Error.FREQ:
-                    return "Illegal Sample Rate";
+                    return BassResource.Error_Freq;
 
                 case Error.NOA3D:
-                    return "A3D.DLL is Not Installed";
+                    return BassResource.Error_NoA3D;
 
                 case Error.NOTFILE:
-                    return "The Stream is Not a File Stream (WAV/MP3)";
+                    return BassResource.Error_NotFile;
 
                 case Error.NOHW:
-                    return "No Hardware Voices Available";
+                    return BassResource.Error_NoHW;
 
                 case Error.EMPTY:
-                    return "The MOD music has no sequence data";
+                    return BassResource.Error_Empty;
 
                 case Error.NONET:
-                    return "No Internet connection could be opened";
+                    return BassResource.Error_NoNet;
 
                 case Error.CREATE:
-                    return "Couldn't create the file";
+                    return BassResource.Error_Create;
 
                 case Error.NOFX:
-                    return "Effects are not enabled";
+                    return BassResource.Error_NoFX;
 
                 case Error.PLAYING:
-                    return "The channel is playing";
+                    return BassResource.Error_Playing;
 
                 case Error.NOTAVAIL:
-                    return "The requested data is not available";
+                    return BassResource.Error_NotAvailable;
 
                 case Error.DECODE:
-                    return "The channel is a 'decoding channel' ";
+                    return BassResource.Error_Decode;
+
+                case Error.FILEFORM:
+                    return BassResource.Error_FileFormat;
+
+                case Error.SPEAKER:
+                    return BassResource.Error_Speakers;
+
+                case Error.VERSION:
+                    return BassResource.Error_Version;
+
+                case Error.CODEC:
+                    return BassResource.Error_Codec; ;
+
+                case Error.ENDED:
+                    return BassResource.Error_Ended;
+
+                case Error.BUSY:
+                    return BassResource.Error_Busy;
 
                 case Error.WMA_LICENSE:
-                    return "the file is protected";
+                    return BassResource.Error_WmaLicence;
 
                 case Error.UNKNOWN:
-                    return "Some Other Mystery Error";
+                    return BassResource.Error_Unknown;
 
                 default:
                     goto case Error.BASS_OK;
             }
         }
-
-        // Get the BASS_ERROR_xxx error code. Use this function to get the reason for an error.
-        [DllImport("bass.dll", EntryPoint = "BASS_ErrorGetCode")]
-        private static extern int _ErrorGetCode(); //OK
     }
 }

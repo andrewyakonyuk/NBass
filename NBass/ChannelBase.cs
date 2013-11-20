@@ -64,7 +64,7 @@ namespace NBass
             get
             {
                 var data = new Data();
-                BassException.Thrown(() => !_Channel.GetInfo(Handle, ref data));
+                BassException.ThrowIfTrue(() => !_Channel.GetInfo(Handle, ref data));
                 return new ChannelInfo(data);
             }
         }
@@ -110,7 +110,7 @@ namespace NBass
 
         public void LinkWith(IChannel channel)
         {
-            BassException.Thrown(() => !_Channel.SetLink(this.Handle, channel.Handle));
+            BassException.ThrowIfTrue(() => !_Channel.SetLink(this.Handle, channel.Handle));
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace NBass
 
         public void UnlinkFrom(IChannel channel)
         {
-            BassException.Thrown(() => !_Channel.RemoveLink(this.Handle, channel.Handle));
+            BassException.ThrowIfTrue(() => !_Channel.RemoveLink(this.Handle, channel.Handle));
         }
 
         protected virtual void CheckDisposed()
@@ -171,7 +171,6 @@ namespace NBass
         protected virtual void Dispose(bool disposing)
         {
             _isDisposed |= !_isDisposed;
-            //TODO dispose channel
         }
 
         #region Properties
@@ -459,7 +458,11 @@ namespace NBass
 
         public ICollection<IEffect> Effects
         {
-            get { return _effects; }
+            get
+            {
+                throw new NotImplementedException();
+                return _effects;
+            }
         }
 
         public bool IsDisposed
@@ -501,13 +504,13 @@ namespace NBass
             {
                 CheckDisposed();
                 var speed = 0f;
-                BassException.Thrown(() => !_Channel.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
+                BassException.ThrowIfTrue(() => !_Channel.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
                 return speed;
             }
             set
             {
                 CheckDisposed();
-                BassException.Thrown(() => !_Channel.SetAttribute(Handle, (int)Attribute.PAN, value));
+                BassException.ThrowIfTrue(() => !_Channel.SetAttribute(Handle, (int)Attribute.PAN, value));
             }
         }
 

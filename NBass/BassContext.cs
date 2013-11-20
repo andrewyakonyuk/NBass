@@ -40,7 +40,7 @@ namespace NBass
                 var volume = 0f;
                 var decay = 0f;
                 var damp = 0f;
-                BassException.Thrown(() => !_BassContext.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
+                BassException.ThrowIfTrue(() => !_BassContext.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
                 return environment;
             }
             set
@@ -152,13 +152,16 @@ namespace NBass
                         result = _BassContext.SetEAXParameters(EAXEnvironment.Psychotic, 0.486f, 7.563f, 0.806f);
                         break;
                 }
-                BassException.Thrown(() => result);
+                BassException.ThrowIfTrue(() => result);
             }
         }
 
         public ICollection<Plugin> Plugins
         {
-            get { return _plugins; }
+            get {
+                throw new NotImplementedException();
+                return _plugins;
+            }
         }
 
         public void Dispose()
@@ -169,20 +172,14 @@ namespace NBass
 
         public IStream Load(string filePath, StreamFlags flags)
         {
-            flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(_BassContext.LoadStream(false, filePath, 0, 0, (int)flags));
-            BassException.Thrown(() => handle == IntPtr.Zero);
-            return new Stream(handle)
-            {
-                Owner = this
-            };
+            return Load(filePath, 0, 0, flags);
         }
 
         public IStream Load(string filePath, long position, long length, StreamFlags flags)
         {
             flags |= StreamFlags.Unicode;
             var handle = new IntPtr(_BassContext.LoadStream(false, filePath, position, length, (int)flags));
-            BassException.Thrown(() => handle == IntPtr.Zero);
+            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
             return new Stream(handle)
             {
                 Owner = this
@@ -191,20 +188,14 @@ namespace NBass
 
         public IStream Load(Uri uri, StreamFlags flags)
         {
-            flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(_BassContext.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, null, IntPtr.Zero));
-            BassException.Thrown(() => handle == IntPtr.Zero);
-            return new Stream(handle)
-            {
-                Owner = this
-            };
+            return Load(uri, flags, null);
         }
 
         public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
         {
             flags |= StreamFlags.Unicode;
             var handle = new IntPtr(_BassContext.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
-            BassException.Thrown(() => handle == IntPtr.Zero);
+            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
             return new Stream(handle)
             {
                 Owner = this
@@ -213,12 +204,12 @@ namespace NBass
 
         public void Start()
         {
-            BassException.Thrown(() => !_BassContext.Start());
+            BassException.ThrowIfTrue(() => !_BassContext.Start());
         }
 
         public void Stop()
         {
-            BassException.Thrown(() => !_BassContext.Stop());
+            BassException.ThrowIfTrue(() => !_BassContext.Stop());
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -228,13 +219,13 @@ namespace NBass
                 //free manage resource
             }
 
-            //free unmanage resource
-            BassException.Thrown(() => !_BassContext.Free());
+            //free unmanaged resource
+            BassException.ThrowIfTrue(() => !_BassContext.Free());
         }
 
         protected void Init(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win, IntPtr clsid)
         {
-            BassException.Thrown(() => !_BassContext.Init(device, frequence, (int)flags, win, clsid));
+            BassException.ThrowIfTrue(() => !_BassContext.Init(device, frequence, (int)flags, win, clsid));
 
             _plugins = new ObservableCollection<Plugin>();
             _plugins.CollectionChanged += _plugins_CollectionChanged;

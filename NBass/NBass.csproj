@@ -43,12 +43,18 @@
   <ItemGroup>
     <Compile Include="AdvancedChannel.cs" />
     <Compile Include="Backstage\BassContext.cs" />
+    <Compile Include="Backstage\BassException.cs" />
     <Compile Include="Backstage\Channel.cs" />
     <Compile Include="Backstage\Delegates.cs" />
     <Compile Include="Backstage\Stream.cs" />
     <Compile Include="Backstage\Structures.cs" />
     <Compile Include="BassContext.cs" />
     <Compile Include="BassException.cs" />
+    <Compile Include="BassResource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BassResource.resx</DependentUpon>
+    </Compile>
     <Compile Include="ChannelBase.cs" />
     <Compile Include="Declaration\ID3Tag.cs" />
     <Compile Include="Declaration\IEffect.cs" />
@@ -69,6 +75,12 @@
     <Compile Include="Record.cs" />
     <Compile Include="Stream.cs" />
     <Compile Include="Structs.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BassResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>BassResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
