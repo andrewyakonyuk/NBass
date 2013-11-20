@@ -49,6 +49,8 @@ namespace NBass.Tests
                 {
                     stream.Volume = 0.9f;
                     stream.Play();
+                    var info = stream.Info;
+
                 }
             }
 		}

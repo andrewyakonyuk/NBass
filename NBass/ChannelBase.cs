@@ -22,11 +22,12 @@ namespace NBass
         private readonly ObservableCollection<IEffect> _effects = new ObservableCollection<IEffect>();
         private readonly IntPtr _handle;
         private readonly Timer _progresstimer;
+        private EventHandler _channelEnd;
         private GetSyncCallBack _getSync;
         private bool _isDisposed;
         private bool _isLocked;
         private BassContext _owner;
-        private EventHandler _streamendstore;
+        private Channel3DPosition _position3d;
         private IntPtr HSYNC;
 
         #endregion Field
@@ -103,13 +104,54 @@ namespace NBass
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Retrieves upto "length" bytes of the channel//s current sample data. 16-bit data
+        /// </summary>
+        /// <param name="buffer">A buffer to place retrieved data</param>
+        /// <param name="length">length in bytes</param>
+        public int GetData(short[] buffer, int length)
+        {
+            CheckDisposed();
+            int output = _Channel.GetData(Handle, buffer, length);
+            if (output < 0) throw new BassException();
+            return output;
+        }
+
+        /// <summary>
+        /// Retrieves upto "length" bytes of the channel//s current sample data. 8-bit data
+        /// </summary>
+        /// <param name="buffer">A buffer to place retrieved data</param>
+        /// <param name="length">length in bytes</param>
+        public int GetData(byte[] buffer, int length)
+        {
+            CheckDisposed();
+            int output = _Channel.GetData(Handle, buffer, length);
+            if (output < 0) throw new BassException();
+            return output;
+        }
+
+        /// <summary>
+        /// Retrieves upto "length" bytes of the channel//s current sample data. This is
+        /// useful if you wish to "visualize" the sound.
+        /// </summary>
+        /// <param name="buffer">A buffer to place retrieved data</param>
+        /// <param name="flags">ChannelDataFlags</param>
+        public int GetData(float[] buffer, int length)
+        {
+            CheckDisposed();
+            int output = _Channel.GetData(Handle, buffer, length);
+            if (output < 0) throw new BassException();
+            return output;
+        }
+
         public string[] GetTag(Tag tag)
         {
             return GetTagGen(tag);
         }
 
-        public void LinkWith(IChannel channel)
+        public void LinkTo(IChannel channel)
         {
+            CheckDisposed();
             BassException.ThrowIfTrue(() => !_Channel.SetLink(this.Handle, channel.Handle));
         }
 
@@ -119,14 +161,12 @@ namespace NBass
         public virtual void Pause()
         {
             CheckDisposed();
-
             if (!_Channel.Pause(_handle)) throw new BassException();
         }
 
         public virtual void Play()
         {
             CheckDisposed();
-
             if (!_Channel.Play(_handle, false)) throw new BassException();
             StartTimer();
         }
@@ -139,7 +179,6 @@ namespace NBass
         public long SecondsToBytes(float pos)
         {
             CheckDisposed();
-
             long result = _Channel.SecondsToBytes(_handle, pos);
             if (result < 0) throw new BassException();
             return result;
@@ -151,13 +190,13 @@ namespace NBass
         public virtual void Stop()
         {
             CheckDisposed();
-
             _progresstimer.Stop();
             if (!_Channel.Stop(Handle)) throw new BassException();
         }
 
         public void UnlinkFrom(IChannel channel)
         {
+            CheckDisposed();
             BassException.ThrowIfTrue(() => !_Channel.RemoveLink(this.Handle, channel.Handle));
         }
 
@@ -317,19 +356,29 @@ namespace NBass
             {
                 CheckDisposed();
 
-                Vector3D pos, orient, vel;
-                if (!_Channel.Get3DPosition(Handle, out pos, out orient, out vel))
+                Vector3D position, orientation, velocity;
+                if (!_Channel.Get3DPosition(Handle, out position, out orientation, out velocity))
                     throw new BassException();
-                return new Channel3DPosition(pos, orient, vel);
+                if (_position3d == null)
+                {
+                    _position3d = new Channel3DPosition(position, orientation, velocity);
+                }
+                else
+                {
+                    _position3d.Position = position;
+                    _position3d.Orientation = orientation;
+                    _position3d.Velocity = velocity;
+                }
+                return _position3d;
             }
             set
             {
                 CheckDisposed();
 
-                Vector3D pos = value.pos;
-                Vector3D orient = value.orient;
-                Vector3D vel = value.vel;
-                if (!_Channel.Set3DPosition(Handle, ref pos, ref orient, ref vel))
+                Vector3D position = value.Position;
+                Vector3D orientation = value.Orientation;
+                Vector3D velocity = value.Velocity;
+                if (!_Channel.Set3DPosition(Handle, ref position, ref orientation, ref velocity))
                     throw new BassException();
             }
         }
@@ -385,7 +434,7 @@ namespace NBass
             do
             {
                 string tagName = Marshal.PtrToStringAnsi(ptr);
-                if (tagName == "")
+                if (tagName == string.Empty)
                     break;
                 tags.Add(tagName);
                 ptr = new IntPtr(ptr.ToInt32() + (tagName.Length + 1));
@@ -441,7 +490,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                _streamendstore += value;
+                _channelEnd += value;
                 _getSync += new GetSyncCallBack(OnGetSyncCallBack);
                 HSYNC = _Channel.SetSync(Handle, 2, 0, _getSync, IntPtr.Zero);
             }
@@ -449,9 +498,25 @@ namespace NBass
             {
                 CheckDisposed();
 
-                _streamendstore -= value;
+                _channelEnd -= value;
                 _getSync -= new GetSyncCallBack(OnGetSyncCallBack);
                 _Channel.RemoveSync(Handle, HSYNC);
+            }
+        }
+
+        public float Balance
+        {
+            get
+            {
+                CheckDisposed();
+                var speed = 0f;
+                BassException.ThrowIfTrue(() => !_Channel.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
+                return speed;
+            }
+            set
+            {
+                CheckDisposed();
+                BassException.ThrowIfTrue(() => !_Channel.SetAttribute(Handle, (int)Attribute.PAN, value));
             }
         }
 
@@ -479,7 +544,7 @@ namespace NBass
                 CheckDisposed();
 
                 int result = _Channel.GetLevel(Handle);
-                return result < 0 ? 0 : Helper.LoWord(result);/*throw new BASSException();*/
+                return result < 0 ? 0 : Helper.LoWord(result);
             }
         }
 
@@ -493,29 +558,13 @@ namespace NBass
                 CheckDisposed();
 
                 int result = _Channel.GetLevel(Handle);
-                return result < 0 ? 0 : Helper.HiWord(result);/*throw new BASSException();*/
-            }
-        }
-
-        public float Balance
-        {
-            get
-            {
-                CheckDisposed();
-                var speed = 0f;
-                BassException.ThrowIfTrue(() => !_Channel.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
-                return speed;
-            }
-            set
-            {
-                CheckDisposed();
-                BassException.ThrowIfTrue(() => !_Channel.SetAttribute(Handle, (int)Attribute.PAN, value));
+                return result < 0 ? 0 : Helper.HiWord(result);
             }
         }
 
         protected virtual void OnEnd()
         {
-            if (_streamendstore != null) _streamendstore(this, null);
+            if (_channelEnd != null) _channelEnd(this, null);
         }
 
         private void OnGetSyncCallBack(IntPtr handle, IntPtr channel, int data, int user)
@@ -532,6 +581,6 @@ namespace NBass
             throw new NotImplementedException();
         }
 
-        #endregion
+        #endregion ICloneable Members
     }
 }

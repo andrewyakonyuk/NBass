@@ -17,6 +17,10 @@ namespace NBass.Declaration
 
         ICollection<IEffect> Effects { get; }
 
+        IntPtr Handle { get; }
+
+        ChannelInfo Info { get; }
+
         int LeftLevel { get; }
 
         long Length { get; }
@@ -34,10 +38,13 @@ namespace NBass.Declaration
         int RightLevel { get; }
 
         IID3Tag TagID3 { get; }
-
-        IntPtr Handle { get; }
-
         float Volume { get; set; }
+
+        int GetData(byte[] buffer, int length);
+
+        int GetData(float[] buffer, int length);
+
+        int GetData(short[] buffer, int length);
 
         string[] GetTag(Tag tag);
 

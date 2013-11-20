@@ -23,7 +23,6 @@ namespace NBass
         SFFT1024 = 0x80000011, //  1024 stereo sample FFT
         [MarshalAs(UnmanagedType.U4)]
         SFFT2048 = 0x80000012, //  2048 stereo FFT
-
     }
 
     [Flags()]

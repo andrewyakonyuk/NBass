@@ -100,10 +100,6 @@ namespace NBass
     /// </summary>
     public class Channel3DPosition
     {
-        public Vector3D pos;
-        public Vector3D orient;
-        public Vector3D vel;
-
         /// <summary>
         /// Used with getting and setting Channel3DPosition
         /// </summary>
@@ -113,18 +109,14 @@ namespace NBass
         /// <param name="vel">velocity of the sound</param>
         public Channel3DPosition(Vector3D pos, Vector3D orient, Vector3D vel)
         {
-            this.pos = pos;
-            this.orient = orient;
-            this.vel = vel;
+            this.Position = pos;
+            this.Orientation = orient;
+            this.Velocity = vel;
         }
 
-        public override string ToString()
-        {
-            return String.Format("pos:{0}:orient:{1}:vel:{2}",
-                pos,
-                orient,
-                vel);
-        }
+        public Vector3D Position { get; set; }
+        public Vector3D Orientation { get; set; }
+        public Vector3D Velocity { get; set; }
     }
 
     /// <summary>
@@ -515,7 +507,7 @@ namespace NBass
         /// <summary>
         /// The filename associated with the channel. (HSTREAM only)
         /// </summary>
-        public string Filename;
+        public string Filename { get; private set; }
 
         /// <summary>
         /// Is the channel a decoding channel?

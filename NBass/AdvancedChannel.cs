@@ -11,9 +11,6 @@ namespace NBass
     public abstract class AdvancedChannel : ChannelBase
     {
         private bool disposed = false;
-        private IntPtr HSYNC;
-        private GetSyncCallBack getSync;
-        private EventHandler streamendstore;
 
         public AdvancedChannel(IntPtr handle)
             : base(handle)
@@ -44,22 +41,6 @@ namespace NBass
 
         #region Other Common
 
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. This is
-        /// useful if you wish to "visualize" the sound.
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="flags">ChannelDataFlags</param>
-        public int GetData(float[] buffer, ChannelDataFlags flags)
-        {
-            if (this.disposed)
-                throw new ObjectDisposedException(this.ToString());
-
-            int output = _Channel.GetData(base.Handle, buffer, (int)flags);
-            if (output < 0) throw new BassException();
-            return output;
-        }
-
         private static int GetDataLength(ChannelDataFlags flags)
         {
             switch (flags)
@@ -85,21 +66,6 @@ namespace NBass
                 default:
                     return 1024;
             }
-        }
-
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. 16-bit data
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="length">length in bytes</param>
-        public int GetData(short[] buffer, int length)
-        {
-            if (this.disposed)
-                throw new ObjectDisposedException(this.ToString());
-
-            int output = _Channel.GetData(base.Handle, buffer, length);
-            if (output < 0) throw new BassException();
-            return output;
         }
 
         /// <summary>
@@ -131,21 +97,6 @@ namespace NBass
 
             if (_Channel.RemoveFX(base.Handle, fx.Handle) == 0)
                 throw new BassException();
-        }
-
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. 8-bit data
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="length">length in bytes</param>
-        public int GetData(byte[] buffer, int length)
-        {
-            if (this.disposed)
-                throw new ObjectDisposedException(this.ToString());
-
-            int output = _Channel.GetData(base.Handle, buffer, length);
-            if (output < 0) throw new BassException();
-            return output;
         }
 
         #endregion Other Common
