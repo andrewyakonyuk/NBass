@@ -1,0 +1,121 @@
+using System;
+using NUnit.Framework;
+
+namespace NBass.Tests
+{
+    //TODO change long position and lenght to datetime type
+    //TODO add check on disposed in CanPlay 
+
+    [TestFixture]
+    public class StreamTests
+    {
+        const string MediaPath = @"..\..\Media\Maid with the Flaxen Hair.mp3";
+        BassContext _bassContext;
+
+        [SetUp]
+        public void Init()
+        {
+            var defaultDevice = new IntPtr(-1);
+            var rate = 44100;
+            var win = IntPtr.Zero;
+
+            _bassContext = new BassContext(defaultDevice, rate, DeviceSetupFlags.Default, win);
+        }
+
+        [TearDown]
+        public void Down()
+        {
+            _bassContext.Dispose();
+        }
+
+        [Test]
+        public void Create_Stream()
+        {
+            var stream = _bassContext.Load(MediaPath, 0, 0, StreamFlags.Default);
+
+            Assert.NotNull(stream);
+            Assert.AreNotEqual(stream.Handle, IntPtr.Zero);
+        }
+
+        [Test]
+        [ExpectedException(typeof(ObjectDisposedException))]
+        public void Dispose_Stream()
+        {
+            var stream = _bassContext.Load(MediaPath);
+            Assert.NotNull(stream);
+            Assert.AreNotEqual(stream.Handle, IntPtr.Zero);
+
+            stream.Dispose();
+            stream.Play();
+        }
+
+        [Test]
+        public void Stream_Play()
+        {
+            var stream = _bassContext.Load(MediaPath);
+            stream.Play();
+
+            Assert.NotNull(stream);
+            Assert.AreNotEqual(stream.Handle, IntPtr.Zero);
+            Assert.AreEqual(stream.ActivityState, ChannelState.Playing);
+        }
+
+        [Test]
+        public void Stream_GetInfo()
+        {
+            var stream = _bassContext.Load(MediaPath);
+            var info = stream.Info;
+
+            Assert.AreEqual(MediaPath, info.Filename);
+            Assert.AreEqual(44100, info.Frequence);
+            Assert.AreEqual(ChannelType.StreamMP3, info.Type);
+        }
+
+        [Test]
+        public void Stream_Effects()
+        {
+            var stream = _bassContext.Load(MediaPath);
+
+            var effects = stream.Effects;
+        }
+
+        [Test]
+        public void Stream_ActivityState()
+        {
+            var stream = _bassContext.Load(MediaPath);
+            Assert.AreEqual(ChannelState.Stopped, stream.ActivityState);
+            stream.Play();
+            Assert.AreEqual(ChannelState.Playing, stream.ActivityState);
+            stream.Pause();
+            Assert.AreEqual(ChannelState.Paused, stream.ActivityState);
+            stream.Stop();
+            Assert.AreEqual(ChannelState.Stopped, stream.ActivityState);
+        }
+
+        [Test]
+        public void Stream_CallbackOnEnd()
+        {
+            bool isEnd = false;
+            var stream = _bassContext.Load(MediaPath);
+            stream.End += (sender, e) => isEnd = true;
+            stream.Position = stream.Length - 3;
+            stream.Play();
+            Assert.AreEqual(true, isEnd);
+        }
+
+        [Test]
+        public void Stream_Lenght()
+        {
+            var stream = (Stream)_bassContext.Load(MediaPath);
+            double seconds = stream.BytesToSeconds(stream.Length);
+            var length = TimeSpan.FromSeconds(seconds);
+        }
+
+        [Test]
+        public void Stream_Clone()
+        {
+            var stream = _bassContext.Load(MediaPath);
+            var clone = stream.Clone();
+        }
+    }
+}
