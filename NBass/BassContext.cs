@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Runtime.InteropServices;
 using NBass.Backstage;
 using NBass.Declarations;
 
@@ -23,6 +22,14 @@ namespace NBass
         private bool _isDisposed = false;
         private ObservableCollection<IPlugin> _plugins;
 
+        public BassContext()
+        {
+            var defaultDevice = new IntPtr(-1);
+            var rate = 44100;
+            var win = IntPtr.Zero;
+            Init(defaultDevice, rate, DeviceSetupFlags.Default, win, IntPtr.Zero);
+        }
+
         public BassContext(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win)
         {
             Init(device, frequence, flags, win, IntPtr.Zero);
@@ -32,6 +39,8 @@ namespace NBass
         {
             Dispose(false);
         }
+
+        public bool IsDisposed { get { return _isDisposed; } }
 
         public EAXEnvironment EAXEnvironment
         {
@@ -171,6 +180,11 @@ namespace NBass
             GC.SuppressFinalize(this);
         }
 
+        public IStream Load(string filePath)
+        {
+            return Load(filePath, StreamFlags.Default);
+        }
+
         public IStream Load(string filePath, StreamFlags flags)
         {
             return Load(filePath, 0, 0, flags);
@@ -187,6 +201,11 @@ namespace NBass
             };
         }
 
+        public IStream Load(Uri uri)
+        {
+            return Load(uri, StreamFlags.Default, null);
+        }
+
         public IStream Load(Uri uri, StreamFlags flags)
         {
             return Load(uri, flags, null);
@@ -194,7 +213,6 @@ namespace NBass
 
         public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
         {
-            //TODO fix load stream from URL
             flags |= StreamFlags.Unicode;
             var handle = new IntPtr(_BassContext.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
             BassException.ThrowIfTrue(() => handle == IntPtr.Zero);

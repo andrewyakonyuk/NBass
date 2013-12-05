@@ -13,7 +13,7 @@ namespace NBass.Declarations
 
         int GlobalStreamVolume { get; set; }
 
-        ICollection<Plugin> Plugins { get; }
+        ICollection<IPlugin> Plugins { get; }
 
         int UpdatePeriod { get; set; }
 
