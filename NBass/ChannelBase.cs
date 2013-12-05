@@ -176,7 +176,7 @@ namespace NBass
         /// </summary>
         /// <param name="pos">The position to translate</param>
         /// <returns>The byte position</returns>
-        public long SecondsToBytes(float pos)
+        public long SecondsToBytes(double pos)
         {
             CheckDisposed();
             long result = _Channel.SecondsToBytes(_handle, pos);
@@ -283,13 +283,14 @@ namespace NBass
             }
         }
 
-        public virtual long Length
+        public virtual TimeSpan Length
         {
             get
             {
                 CheckDisposed();
-
-                return _Channel.GetLength(Handle, (int)BassMode.POS_BYTES);
+                long lenght = _Channel.GetLength(Handle, (int)BassMode.POS_BYTES);
+                double seconds = BytesToSeconds(lenght);
+                return TimeSpan.FromSeconds(seconds);
             }
         }
 
@@ -330,19 +331,21 @@ namespace NBass
         /// <summary>
         /// Gets/Sets the current playback position of a channel.
         /// </summary>
-        public virtual long Position
+        public virtual TimeSpan Position
         {
             get
             {
                 CheckDisposed();
 
-                return _Channel.GetPosition(Handle, (int)BassMode.POS_BYTES);
+                var position = _Channel.GetPosition(Handle, (int)BassMode.POS_BYTES);
+                double seconds = BytesToSeconds(position);
+                return TimeSpan.FromSeconds(seconds);
             }
             set
             {
                 CheckDisposed();
 
-                if (!_Channel.SetPosition(Handle, value, (int)BassMode.POS_BYTES))
+                if (!_Channel.SetPosition(Handle, SecondsToBytes(value.TotalSeconds), (int)BassMode.POS_BYTES))
                     throw new BassException();
             }
         }

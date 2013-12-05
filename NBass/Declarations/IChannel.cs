@@ -23,13 +23,13 @@ namespace NBass.Declarations
 
         int LeftLevel { get; }
 
-        long Length { get; }
+        TimeSpan Length { get; }
 
         bool Lock { get; set; }
 
         BassContext Owner { get; }
 
-        long Position { get; set; }
+        TimeSpan Position { get; set; }
 
         Channel3DPosition Position3D { get; set; }
 

@@ -3,7 +3,6 @@ using NUnit.Framework;
 
 namespace NBass.Tests
 {
-    //TODO change long position and lenght to datetime type
     //TODO add check on disposed in CanPlay 
 
     [TestFixture]
@@ -98,7 +97,7 @@ namespace NBass.Tests
             bool isEnd = false;
             var stream = _bassContext.Load(MediaPath);
             stream.End += (sender, e) => isEnd = true;
-            stream.Position = stream.Length - 3;
+            stream.Position = stream.Length.Subtract(new TimeSpan(0, 0, 0, 0, 2));
             stream.Play();
             Assert.AreEqual(true, isEnd);
         }
@@ -107,8 +106,9 @@ namespace NBass.Tests
         public void Stream_Lenght()
         {
             var stream = (Stream)_bassContext.Load(MediaPath);
-            double seconds = stream.BytesToSeconds(stream.Length);
-            var length = TimeSpan.FromSeconds(seconds);
+            Assert.AreEqual(0, stream.Length.Hours);
+            Assert.AreEqual(2, stream.Length.Minutes);
+            Assert.AreEqual(49, stream.Length.Seconds);
         }
 
         [Test]
