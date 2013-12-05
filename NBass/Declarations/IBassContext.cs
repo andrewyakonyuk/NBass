@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NBass.Declaration
+namespace NBass.Declarations
 {
     public interface IBassContext : IDisposable
     {

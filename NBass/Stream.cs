@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using NBass.Backstage;
-using NBass.Declaration;
+using NBass.Declarations;
 
 namespace NBass
 {

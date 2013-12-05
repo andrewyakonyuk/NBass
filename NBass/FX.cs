@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 
 namespace NBass
 {
-    //todo create base class FX
-    //todo create concrete class for each FX
+    //TODO create base class FX
+    //TODO create concrete class for each FX
 
     /// <summary>
     /// Summary description for FX.

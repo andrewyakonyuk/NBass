@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NBass.Declaration
+namespace NBass.Declarations
 {
     public interface IChannel : IDisposable, ICloneable
     {
@@ -38,6 +38,7 @@ namespace NBass.Declaration
         int RightLevel { get; }
 
         IID3Tag TagID3 { get; }
+
         float Volume { get; set; }
 
         int GetData(byte[] buffer, int length);

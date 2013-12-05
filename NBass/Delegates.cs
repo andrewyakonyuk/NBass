@@ -9,9 +9,9 @@ namespace NBass
     /// </summary>
     public delegate void ProgessHandler(ChannelBase channel);
 
-    public delegate bool RecordCallback(byte[] buffer, int length, int user);
+    //public delegate bool RecordCallback(byte[] buffer, int length, int user);
 
-    public delegate bool RecordCallback2(short[] buffer, int length, int user);
+    //public delegate bool RecordCallback(short[] buffer, int length, int user);
 
     public delegate void StreamCallback(IntPtr buffer, int length, IntPtr user);
 

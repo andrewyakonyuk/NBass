@@ -56,18 +56,19 @@
       <DependentUpon>BassResource.resx</DependentUpon>
     </Compile>
     <Compile Include="ChannelBase.cs" />
-    <Compile Include="Declaration\ID3Tag.cs" />
-    <Compile Include="Declaration\IEffect.cs" />
-    <Compile Include="Declaration\IMusic.cs" />
-    <Compile Include="Declaration\IRecord.cs" />
-    <Compile Include="Declaration\IStream.cs" />
+    <Compile Include="Declarations\ID3Tag.cs" />
+    <Compile Include="Declarations\IEffect.cs" />
+    <Compile Include="Declarations\IMusic.cs" />
+    <Compile Include="Declarations\IPlugin.cs" />
+    <Compile Include="Declarations\IRecord.cs" />
+    <Compile Include="Declarations\IStream.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="Backstage\Enums.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FX.cs" />
     <Compile Include="Backstage\Helper.cs" />
-    <Compile Include="Declaration\IChannel.cs" />
-    <Compile Include="Declaration\IBassContext.cs" />
+    <Compile Include="Declarations\IChannel.cs" />
+    <Compile Include="Declarations\IBassContext.cs" />
     <Compile Include="ID3v1Tag.cs" />
     <Compile Include="Music.cs" />
     <Compile Include="Plugin.cs" />

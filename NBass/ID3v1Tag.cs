@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text;
-using NBass.Declaration;
+using NBass.Declarations;
 
 namespace NBass
 {

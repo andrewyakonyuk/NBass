@@ -5,7 +5,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Runtime.InteropServices;
 using NBass.Backstage;
-using NBass.Declaration;
+using NBass.Declarations;
 
 namespace NBass
 {
@@ -16,11 +16,12 @@ namespace NBass
     //TODO configuration
     //TODO special effects
     //TODO clone stream (using BASS_StreamCreatePush)
+    //TODO remove unnecessary functionality
 
     public class BassContext : IDisposable, IBassContext
     {
         private bool _isDisposed = false;
-        private ObservableCollection<Plugin> _plugins;
+        private ObservableCollection<IPlugin> _plugins;
 
         public BassContext(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win)
         {
@@ -156,7 +157,7 @@ namespace NBass
             }
         }
 
-        public ICollection<Plugin> Plugins
+        public ICollection<IPlugin> Plugins
         {
             get {
                 throw new NotImplementedException();
@@ -193,6 +194,7 @@ namespace NBass
 
         public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
         {
+            //TODO fix load stream from URL
             flags |= StreamFlags.Unicode;
             var handle = new IntPtr(_BassContext.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
             BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
@@ -227,7 +229,7 @@ namespace NBass
         {
             BassException.ThrowIfTrue(() => !_BassContext.Init(device, frequence, (int)flags, win, clsid));
 
-            _plugins = new ObservableCollection<Plugin>();
+            _plugins = new ObservableCollection<IPlugin>();
             _plugins.CollectionChanged += _plugins_CollectionChanged;
         }
 
@@ -266,8 +268,8 @@ namespace NBass
         /// </summary>
         public int Buffer
         {
-            get { return _GetConfig((int)Configuration.Buffer); }
-            set { _SetConfig((int)Configuration.Buffer, value); }
+            get { return _BassContext.GetConfig((int)Configuration.Buffer); }
+            set { _BassContext.SetConfig((int)Configuration.Buffer, value); }
         }
 
         /// <summary>
@@ -278,8 +280,8 @@ namespace NBass
         /// </summary>
         public int GlobalMusicVolume
         {
-            get { return _GetConfig((int)Configuration.GlobalMusicVolume); }
-            set { _SetConfig((int)Configuration.GlobalMusicVolume, value); }
+            get { return _BassContext.GetConfig((int)Configuration.GlobalMusicVolume); }
+            set { _BassContext.SetConfig((int)Configuration.GlobalMusicVolume, value); }
         }
 
         /// <summary>
@@ -290,8 +292,8 @@ namespace NBass
         /// </summary>
         public int GlobalSampleVolume
         {
-            get { return _GetConfig((int)Configuration.GlobalSampleVolume); }
-            set { _SetConfig((int)Configuration.GlobalSampleVolume, value); }
+            get { return _BassContext.GetConfig((int)Configuration.GlobalSampleVolume); }
+            set { _BassContext.SetConfig((int)Configuration.GlobalSampleVolume, value); }
         }
 
         /// <summary>
@@ -302,8 +304,8 @@ namespace NBass
         /// </summary>
         public int GlobalStreamVolume
         {
-            get { return _GetConfig((int)Configuration.GlobalStreamVolume); }
-            set { _SetConfig((int)Configuration.GlobalStreamVolume, value); }
+            get { return _BassContext.GetConfig((int)Configuration.GlobalStreamVolume); }
+            set { _BassContext.SetConfig((int)Configuration.GlobalStreamVolume, value); }
         }
 
         /// <summary>
@@ -316,16 +318,9 @@ namespace NBass
         /// </summary>
         public int UpdatePeriod
         {
-            get { return _GetConfig((int)Configuration.UpdatePeriod); }
-            set { _SetConfig((int)Configuration.UpdatePeriod, value); }
+            get { return _BassContext.GetConfig((int)Configuration.UpdatePeriod); }
+            set { _BassContext.SetConfig((int)Configuration.UpdatePeriod, value); }
         }
-
-        [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_GetConfig")]
-        public static extern int _GetConfig(int option);
-
-        [DllImport("bass.dll", CharSet = CharSet.Auto)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool _SetConfig(int option, int value);
 
         #endregion Configuration
     }

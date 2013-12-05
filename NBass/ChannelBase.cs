@@ -6,12 +6,10 @@ using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Timers;
 using NBass.Backstage;
-using NBass.Declaration;
+using NBass.Declarations;
 
 namespace NBass
 {
-    //TODO implement channel info
-
     /// <summary>
     /// ChannelBase. The class is not used directly.
     /// </summary>
@@ -69,6 +67,8 @@ namespace NBass
                 return new ChannelInfo(data);
             }
         }
+
+        public bool CanPlay { get; private set; }
 
         public virtual IID3Tag TagID3
         {

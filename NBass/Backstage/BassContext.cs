@@ -37,5 +37,12 @@ namespace NBass.Backstage
         [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_GetEAXParameters")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetEAXParameters(ref EAXEnvironment env, ref float vol, ref float decay, ref float damp);
+
+        [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_GetConfig")]
+        public static extern int GetConfig(int option);
+
+        [DllImport("bass.dll", CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetConfig(int option, int value);
     }
 }

@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NBass.Declaration
+namespace NBass.Declarations
 {
-    public interface IEffect
+    public interface IPlugin
     {
-		IntPtr Hangle{ get; }
-		int Type{ get; }
     }
 }

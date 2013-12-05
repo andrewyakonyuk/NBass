@@ -1,4 +1,4 @@
-﻿namespace NBass.Declaration
+﻿namespace NBass.Declarations
 {
     public enum GenreType : byte
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace NBass.Declaration
+namespace NBass.Declarations
 {
     public interface IRecord : IDisposable
     {

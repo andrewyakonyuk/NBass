@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using NBass.Declarations;
 
 namespace NBass
 {
-    //todo implement plugin info
+    //TODO implement plugin info
 
-    public class Plugin : IDisposable
+    public class Plugin : IPlugin, IDisposable
     {
         bool _isDisposed = false;
 
