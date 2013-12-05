@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using NUnit.Framework;
 
 namespace NBass.Tests
@@ -97,8 +98,9 @@ namespace NBass.Tests
             bool isEnd = false;
             var stream = _bassContext.Load(MediaPath);
             stream.End += (sender, e) => isEnd = true;
-            stream.Position = stream.Length.Subtract(new TimeSpan(0, 0, 0, 0, 2));
+            stream.Position = stream.Length.Subtract(new TimeSpan( 0, 0, 2));
             stream.Play();
+            Thread.Sleep(new TimeSpan(0, 0, 3));
             Assert.AreEqual(true, isEnd);
         }
 
