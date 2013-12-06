@@ -46,6 +46,7 @@
     <Compile Include="Backstage\BassExceptionNativeMethods.cs" />
     <Compile Include="Backstage\ChannelNativeMethods.cs" />
     <Compile Include="Backstage\Delegates.cs" />
+    <Compile Include="Backstage\RecordNativeMethods.cs" />
     <Compile Include="Backstage\StreamNativeMethods.cs" />
     <Compile Include="Backstage\Structures.cs" />
     <Compile Include="BassContext.cs" />

@@ -500,4 +500,21 @@ namespace NBass
         OverridePosition = 0x00020000, //  override longest playing
         OverrideDistance = 0x00030000 //  override furthest from listener (3D only)
     }
+
+    [Flags]
+    public enum RecordFlags
+    {
+        /// <summary>
+        /// Use 8-bit resolution. If neither this or the SampleFloat flags are specified, then the recorded data is 16-bit.
+        /// </summary>
+        SampleEightBit = 1,
+        /// <summary>
+        /// Use 32-bit floating-point sample data. WDM drivers are required to use this flag in Windows.
+        /// </summary>
+        SampleFloat = 256,
+        /// <summary>
+        /// Start the recording paused. 
+        /// </summary>
+        Pause = 32768
+    }
 }

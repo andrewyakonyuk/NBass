@@ -1047,4 +1047,5 @@ namespace NBass
         /// </summary>
         BASS_CONFIG_WINAMP_INPUT_TIMEOUT = 67584
     }
+
 }
