@@ -112,12 +112,5 @@ namespace NBass.Tests
             Assert.AreEqual(2, stream.Length.Minutes);
             Assert.AreEqual(49, stream.Length.Seconds);
         }
-
-        [Test]
-        public void Stream_Clone()
-        {
-            var stream = _bassContext.Load(MediaPath);
-            var clone = stream.Clone();
-        }
     }
 }

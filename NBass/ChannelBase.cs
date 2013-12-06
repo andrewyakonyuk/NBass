@@ -13,7 +13,7 @@ namespace NBass
     /// <summary>
     /// ChannelBase. The class is not used directly.
     /// </summary>
-    public abstract class ChannelBase : IChannel, IDisposable, ICloneable
+    public abstract class ChannelBase : IChannel, IDisposable
     {
         #region Field
 
@@ -576,14 +576,5 @@ namespace NBass
         }
 
         #endregion IChannel Members
-
-        #region ICloneable Members
-
-        public object Clone()
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion ICloneable Members
     }
 }

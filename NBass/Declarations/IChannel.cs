@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NBass.Declarations
 {
-    public interface IChannel : IDisposable, ICloneable
+    public interface IChannel : IDisposable
     {
         event EventHandler End;
 
