@@ -16,6 +16,13 @@ namespace NBass
     //TODO special effects
     //TODO clone stream (using BASS_StreamCreatePush)
     //TODO BASS_GET3DFactors and BASS_SET3DFactors
+    //TODO add comments for native methods
+    //TODO add comments for high-level member
+    //TODO add music native methods
+    //TODO add music info property
+    //TODO add record native methods
+    //TODO add sample native methods
+    //TODO update interfaces
 
     public class BassContext : IDisposable, IBassContext
     {
