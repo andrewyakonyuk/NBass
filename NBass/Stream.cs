@@ -21,7 +21,7 @@ namespace NBass
             {
                 //free manage resource
             }
-            _Stream.Free(base.Handle);
+            StreamNativeMethods.Free(base.Handle);
             base.Dispose(disposing);
         }
     }

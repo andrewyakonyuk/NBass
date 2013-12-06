@@ -63,7 +63,7 @@ namespace NBass
             get
             {
                 var data = new Data();
-                BassException.ThrowIfTrue(() => !_Channel.GetInfo(Handle, ref data));
+                BassException.ThrowIfTrue(() => !ChannelNativeMethods.GetInfo(Handle, ref data));
                 return new ChannelInfo(data);
             }
         }
@@ -77,7 +77,7 @@ namespace NBass
                 CheckDisposed();
 
                 var bytetag = new byte[128];
-                IntPtr ptr = _Channel.GetTags(Handle, (int)Tag.ID3);
+                IntPtr ptr = ChannelNativeMethods.GetTags(Handle, (int)Tag.ID3);
                 if (ptr != IntPtr.Zero)
                     Marshal.Copy(ptr, bytetag, 0, bytetag.Length);
                 return new ID3v1Tag(bytetag);
@@ -93,7 +93,7 @@ namespace NBass
         {
             CheckDisposed();
 
-            var result = _Channel.BytesToSeconds(_handle, pos);
+            var result = ChannelNativeMethods.BytesToSeconds(_handle, pos);
             if (result < 0) throw new BassException();
             return result;
         }
@@ -112,7 +112,7 @@ namespace NBass
         public int GetData(short[] buffer, int length)
         {
             CheckDisposed();
-            int output = _Channel.GetData(Handle, buffer, length);
+            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
             if (output < 0) throw new BassException();
             return output;
         }
@@ -125,7 +125,7 @@ namespace NBass
         public int GetData(byte[] buffer, int length)
         {
             CheckDisposed();
-            int output = _Channel.GetData(Handle, buffer, length);
+            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
             if (output < 0) throw new BassException();
             return output;
         }
@@ -139,7 +139,7 @@ namespace NBass
         public int GetData(float[] buffer, int length)
         {
             CheckDisposed();
-            int output = _Channel.GetData(Handle, buffer, length);
+            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
             if (output < 0) throw new BassException();
             return output;
         }
@@ -152,7 +152,7 @@ namespace NBass
         public void LinkTo(IChannel channel)
         {
             CheckDisposed();
-            BassException.ThrowIfTrue(() => !_Channel.SetLink(this.Handle, channel.Handle));
+            BassException.ThrowIfTrue(() => !ChannelNativeMethods.SetLink(this.Handle, channel.Handle));
         }
 
         /// <summary>
@@ -161,13 +161,13 @@ namespace NBass
         public virtual void Pause()
         {
             CheckDisposed();
-            if (!_Channel.Pause(_handle)) throw new BassException();
+            if (!ChannelNativeMethods.Pause(_handle)) throw new BassException();
         }
 
         public virtual void Play()
         {
             CheckDisposed();
-            if (!_Channel.Play(_handle, false)) throw new BassException();
+            if (!ChannelNativeMethods.Play(_handle, false)) throw new BassException();
             StartTimer();
         }
 
@@ -179,7 +179,7 @@ namespace NBass
         public long SecondsToBytes(double pos)
         {
             CheckDisposed();
-            long result = _Channel.SecondsToBytes(_handle, pos);
+            long result = ChannelNativeMethods.SecondsToBytes(_handle, pos);
             if (result < 0) throw new BassException();
             return result;
         }
@@ -191,13 +191,13 @@ namespace NBass
         {
             CheckDisposed();
             _progresstimer.Stop();
-            if (!_Channel.Stop(Handle)) throw new BassException();
+            if (!ChannelNativeMethods.Stop(Handle)) throw new BassException();
         }
 
         public void UnlinkFrom(IChannel channel)
         {
             CheckDisposed();
-            BassException.ThrowIfTrue(() => !_Channel.RemoveLink(this.Handle, channel.Handle));
+            BassException.ThrowIfTrue(() => !ChannelNativeMethods.RemoveLink(this.Handle, channel.Handle));
         }
 
         protected virtual void CheckDisposed()
@@ -222,7 +222,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                return (ChannelState)_Channel.IsActive(_handle);
+                return (ChannelState)ChannelNativeMethods.IsActive(_handle);
             }
         }
 
@@ -242,7 +242,7 @@ namespace NBass
                 int oangle = 0;
                 int outvol = 0;
 
-                if (!_Channel.Get3DAttributes(Handle, ref mode, ref min, ref max,
+                if (!ChannelNativeMethods.Get3DAttributes(Handle, ref mode, ref min, ref max,
                     ref iangle, ref oangle, ref outvol))
                     throw new BassException();
                 return new Channel3DAttributes(mode, min, max, iangle, oangle, outvol);
@@ -251,7 +251,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                if (!_Channel.Set3DAttributes(Handle, value.mode, value.min, value.max,
+                if (!ChannelNativeMethods.Set3DAttributes(Handle, value.mode, value.min, value.max,
                     value.iangle, value.oangle, value.outvol))
                     throw new BassException();
             }
@@ -263,13 +263,13 @@ namespace NBass
             {
                 CheckDisposed();
 
-                return _Channel.GetDevice(Handle);
+                return ChannelNativeMethods.GetDevice(Handle);
             }
             set
             {
                 CheckDisposed();
 
-                if (!_Channel.SetDevice(Handle, value))
+                if (!ChannelNativeMethods.SetDevice(Handle, value))
                     throw new BassException();
             }
         }
@@ -288,7 +288,7 @@ namespace NBass
             get
             {
                 CheckDisposed();
-                long lenght = _Channel.GetLength(Handle, (int)BassMode.POS_BYTES);
+                long lenght = ChannelNativeMethods.GetLength(Handle, (int)BassMode.POS_BYTES);
                 double seconds = BytesToSeconds(lenght);
                 return TimeSpan.FromSeconds(seconds);
             }
@@ -306,7 +306,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                if (!_Channel.Lock(Handle, value))
+                if (!ChannelNativeMethods.Lock(Handle, value))
                     throw new BassException();
                 _isLocked = value;
             }
@@ -337,7 +337,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                var position = _Channel.GetPosition(Handle, (int)BassMode.POS_BYTES);
+                var position = ChannelNativeMethods.GetPosition(Handle, (int)BassMode.POS_BYTES);
                 double seconds = BytesToSeconds(position);
                 return TimeSpan.FromSeconds(seconds);
             }
@@ -345,7 +345,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                if (!_Channel.SetPosition(Handle, SecondsToBytes(value.TotalSeconds), (int)BassMode.POS_BYTES))
+                if (!ChannelNativeMethods.SetPosition(Handle, SecondsToBytes(value.TotalSeconds), (int)BassMode.POS_BYTES))
                     throw new BassException();
             }
         }
@@ -360,7 +360,7 @@ namespace NBass
                 CheckDisposed();
 
                 Vector3D position, orientation, velocity;
-                if (!_Channel.Get3DPosition(Handle, out position, out orientation, out velocity))
+                if (!ChannelNativeMethods.Get3DPosition(Handle, out position, out orientation, out velocity))
                     throw new BassException();
                 if (_position3d == null)
                 {
@@ -381,7 +381,7 @@ namespace NBass
                 Vector3D position = value.Position;
                 Vector3D orientation = value.Orientation;
                 Vector3D velocity = value.Velocity;
-                if (!_Channel.Set3DPosition(Handle, ref position, ref orientation, ref velocity))
+                if (!ChannelNativeMethods.Set3DPosition(Handle, ref position, ref orientation, ref velocity))
                     throw new BassException();
             }
         }
@@ -409,7 +409,7 @@ namespace NBass
                 CheckDisposed();
 
                 float value = 0;
-                if (!_Channel.GetAttribute(Handle, (int)Attribute.VOL, ref value))
+                if (!ChannelNativeMethods.GetAttribute(Handle, (int)Attribute.VOL, ref value))
                 {
                     throw new BassException();
                 }
@@ -419,7 +419,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                if (!_Channel.SetAttribute(Handle, (int)Attribute.VOL, value))
+                if (!ChannelNativeMethods.SetAttribute(Handle, (int)Attribute.VOL, value))
                 {
                     throw new BassException();
                 }
@@ -431,7 +431,7 @@ namespace NBass
         protected string[] GetTagGen(Tag tag)
         {
             var tags = new ArrayList();
-            IntPtr ptr = _Channel.GetTags(Handle, (int)tag);
+            IntPtr ptr = ChannelNativeMethods.GetTags(Handle, (int)tag);
             if (ptr == IntPtr.Zero)
                 throw new BassException();
             do
@@ -495,7 +495,7 @@ namespace NBass
 
                 _channelEnd += value;
                 _getSync += new GetSyncCallBack(OnGetSyncCallBack);
-                HSYNC = _Channel.SetSync(Handle, 2, 0, _getSync, IntPtr.Zero);
+                HSYNC = ChannelNativeMethods.SetSync(Handle, 2, 0, _getSync, IntPtr.Zero);
             }
             remove
             {
@@ -503,7 +503,7 @@ namespace NBass
 
                 _channelEnd -= value;
                 _getSync -= new GetSyncCallBack(OnGetSyncCallBack);
-                _Channel.RemoveSync(Handle, HSYNC);
+                ChannelNativeMethods.RemoveSync(Handle, HSYNC);
             }
         }
 
@@ -513,13 +513,13 @@ namespace NBass
             {
                 CheckDisposed();
                 var speed = 0f;
-                BassException.ThrowIfTrue(() => !_Channel.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
+                BassException.ThrowIfTrue(() => !ChannelNativeMethods.GetAttribute(Handle, (int)Attribute.PAN, ref speed));
                 return speed;
             }
             set
             {
                 CheckDisposed();
-                BassException.ThrowIfTrue(() => !_Channel.SetAttribute(Handle, (int)Attribute.PAN, value));
+                BassException.ThrowIfTrue(() => !ChannelNativeMethods.SetAttribute(Handle, (int)Attribute.PAN, value));
             }
         }
 
@@ -546,7 +546,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                int result = _Channel.GetLevel(Handle);
+                int result = ChannelNativeMethods.GetLevel(Handle);
                 return result < 0 ? 0 : Helper.LoWord(result);
             }
         }
@@ -560,7 +560,7 @@ namespace NBass
             {
                 CheckDisposed();
 
-                int result = _Channel.GetLevel(Handle);
+                int result = ChannelNativeMethods.GetLevel(Handle);
                 return result < 0 ? 0 : Helper.HiWord(result);
             }
         }

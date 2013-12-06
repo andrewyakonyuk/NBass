@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,12 +42,11 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvancedChannel.cs" />
-    <Compile Include="Backstage\BassContext.cs" />
-    <Compile Include="Backstage\BassException.cs" />
-    <Compile Include="Backstage\Channel.cs" />
+    <Compile Include="Backstage\BassContextNativeMethods.cs" />
+    <Compile Include="Backstage\BassExceptionNativeMethods.cs" />
+    <Compile Include="Backstage\ChannelNativeMethods.cs" />
     <Compile Include="Backstage\Delegates.cs" />
-    <Compile Include="Backstage\Stream.cs" />
+    <Compile Include="Backstage\StreamNativeMethods.cs" />
     <Compile Include="Backstage\Structures.cs" />
     <Compile Include="BassContext.cs" />
     <Compile Include="BassException.cs" />

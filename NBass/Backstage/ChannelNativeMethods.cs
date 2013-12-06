@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NBass.Backstage
 {
-    public static class _Channel
+    public static class ChannelNativeMethods
     {
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelBytes2Seconds", CharSet = CharSet.Auto)]
         public static extern double BytesToSeconds(IntPtr handle, long pos);

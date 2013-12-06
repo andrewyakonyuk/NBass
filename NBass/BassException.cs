@@ -128,7 +128,7 @@ namespace NBass
 
         private static int GetErrorCode()
         {
-            return _BassException.GetErrorCode();
+            return BassExceptionNativeMethods.GetErrorCode();
         }
 
         private static string GetErrorMessage(Error error)
