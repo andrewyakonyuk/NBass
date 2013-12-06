@@ -15,13 +15,13 @@ namespace NBass
     //TODO configuration
     //TODO special effects
     //TODO clone stream (using BASS_StreamCreatePush)
-    //TODO remove unnecessary functionality
+    //TODO BASS_GET3DFactors and BASS_SET3DFactors
 
     public class BassContext : IDisposable, IBassContext
     {
         private bool _isDisposed = false;
         private ObservableCollection<IPlugin> _plugins;
-        Dictionary<EAXEnvironment, EnvironmentItem> _environmentsPreset;
+        Dictionary<EAXEnvironment, EnvironmentInfo> _environmentsPreset;
 
         public BassContext()
         {
@@ -34,134 +34,134 @@ namespace NBass
 
         private void InitEnvironment()
         {
-            _environmentsPreset = new Dictionary<EAXEnvironment, EnvironmentItem>
+            _environmentsPreset = new Dictionary<EAXEnvironment, EnvironmentInfo>
                 {
-                    {EAXEnvironment.Generic, new EnvironmentItem{
+                    {EAXEnvironment.Generic, new EnvironmentInfo{
                         Volume = 0.5f,
                         Decay = 1.493f,
                         Damp = 0.5f
                     }},
-                    {EAXEnvironment.PaddedCell, new EnvironmentItem{
+                    {EAXEnvironment.PaddedCell, new EnvironmentInfo{
                         Volume = 0.25f,
                         Decay = 0.1f,
                         Damp = 0f
                     }},
-                    {EAXEnvironment.Room, new EnvironmentItem{
+                    {EAXEnvironment.Room, new EnvironmentInfo{
                         Volume = 0.417f,
                         Decay = 0.4f,
                         Damp = 0.666f
                     }},
-                    {EAXEnvironment.Bathroom, new EnvironmentItem{
+                    {EAXEnvironment.Bathroom, new EnvironmentInfo{
                         Volume = 0.653f,
                         Decay = 1.499f,
                         Damp = 0.166f
                     }},
-                    {EAXEnvironment.LivingRoom, new EnvironmentItem{
+                    {EAXEnvironment.LivingRoom, new EnvironmentInfo{
                         Volume = 0.208f,
                         Decay = 0.478f,
                         Damp = 0f
                     }},
-                    {EAXEnvironment.StoneRoom, new EnvironmentItem{
+                    {EAXEnvironment.StoneRoom, new EnvironmentInfo{
                         Volume = 0.5f,
                         Decay = 2.309f,
                         Damp = 0.888f
                     }},
-                    {EAXEnvironment.Auditorium, new EnvironmentItem{
+                    {EAXEnvironment.Auditorium, new EnvironmentInfo{
                         Volume = 0.403f,
                         Decay = 4.279f,
                         Damp = 0.5f
                     }},
-                    {EAXEnvironment.ConcertHall, new EnvironmentItem{
+                    {EAXEnvironment.ConcertHall, new EnvironmentInfo{
                         Volume = 0.5f,
                         Decay = 3.961f,
                         Damp = 0.5f
                     }},
-                    {EAXEnvironment.Cave, new EnvironmentItem{
+                    {EAXEnvironment.Cave, new EnvironmentInfo{
                         Volume = 0.5f,
                         Decay = 2.886f,
                         Damp = 1.304f
                     }},
-                    {EAXEnvironment.Arena, new EnvironmentItem{
+                    {EAXEnvironment.Arena, new EnvironmentInfo{
                         Volume = 0.361f,
                         Decay = 7.284f,
                         Damp = 0.332f
                     }},
-                    {EAXEnvironment.Hangar, new EnvironmentItem{
+                    {EAXEnvironment.Hangar, new EnvironmentInfo{
                         Volume = 0.5f,
                         Decay = 10f,
                         Damp = 0.3f
                     }},
-                    {EAXEnvironment.CarpetedHallway, new EnvironmentItem{
+                    {EAXEnvironment.CarpetedHallway, new EnvironmentInfo{
                         Volume = 0.153f,
                         Decay = 0.259f,
                         Damp = 2f
                     }},
-                    {EAXEnvironment.Hallway, new EnvironmentItem{
+                    {EAXEnvironment.Hallway, new EnvironmentInfo{
                         Volume = 0.361f,
                         Decay = 1.493f,
                         Damp = 0f
                     }},
-                    {EAXEnvironment.StoneCorridor, new EnvironmentItem{
+                    {EAXEnvironment.StoneCorridor, new EnvironmentInfo{
                         Volume = 0.444f,
                         Decay = 2.697f,
                         Damp = 0.638f
                     }},
-                    {EAXEnvironment.Alley, new EnvironmentItem{
+                    {EAXEnvironment.Alley, new EnvironmentInfo{
                         Volume = 0.25f,
                         Decay = 1.752f,
                         Damp = 0.776f
                     }},
-                    {EAXEnvironment.Forest, new EnvironmentItem{
+                    {EAXEnvironment.Forest, new EnvironmentInfo{
                         Volume = 0.111f,
                         Decay = 3.145f,
                         Damp = 0.472f
                     }},
-                    {EAXEnvironment.City, new EnvironmentItem{
+                    {EAXEnvironment.City, new EnvironmentInfo{
                         Volume = 0.11f,
                         Decay = 2.767f,
                         Damp = 0.224f
                     }},
-                    {EAXEnvironment.Mountains, new EnvironmentItem{
+                    {EAXEnvironment.Mountains, new EnvironmentInfo{
                         Volume = 0.194f,
                         Decay = 7.841f,
                         Damp = 0.472f
                     }},
-                    {EAXEnvironment.Quarry, new EnvironmentItem{
+                    {EAXEnvironment.Quarry, new EnvironmentInfo{
                         Volume = 1f,
                         Decay = 1.499f,
                         Damp = 0.5f
                     }},
-                    {EAXEnvironment.Plain, new EnvironmentItem{
+                    {EAXEnvironment.Plain, new EnvironmentInfo{
                         Volume = 0.097f,
                         Decay = 2.767f,
                         Damp = 0.224f
                     }},
-                    {EAXEnvironment.ParkingLot, new EnvironmentItem{
+                    {EAXEnvironment.ParkingLot, new EnvironmentInfo{
                         Volume = 0.208f,
                         Decay = 1.652f,
                         Damp = 1.5f
                     }},
-                    {EAXEnvironment.SewerPipe, new EnvironmentItem{
+                    {EAXEnvironment.SewerPipe, new EnvironmentInfo{
                         Volume = 0.652f,
                         Decay = 2.886f,
                         Damp = 0.25f
                     }},
-                    {EAXEnvironment.Underwater, new EnvironmentItem{
+                    {EAXEnvironment.Underwater, new EnvironmentInfo{
                         Volume = 1f,
                         Decay = 1.449f,
                         Damp = 0f
                     }},
-                    {EAXEnvironment.Drugged, new EnvironmentItem{
+                    {EAXEnvironment.Drugged, new EnvironmentInfo{
                         Volume = 0.875f,
                         Decay = 8.392f,
                         Damp = 1.388f
                     }},
-                    {EAXEnvironment.Dizzy, new EnvironmentItem{
+                    {EAXEnvironment.Dizzy, new EnvironmentInfo{
                         Volume = 0.139f,
                         Decay = 17.234f,
                         Damp = 0.666f
                     }},
-                    {EAXEnvironment.Psychotic, new EnvironmentItem{
+                    {EAXEnvironment.Psychotic, new EnvironmentInfo{
                         Volume = 0.486f,
                         Decay = 7.563f,
                         Damp = 0.806f
@@ -199,19 +199,19 @@ namespace NBass
             }
         }
 
-        public void SetEnvironment(EnvironmentItem item)
+        public void SetEnvironment(EnvironmentInfo item)
         {
             BassException.ThrowIfTrue(() => !BassContextNativeMethods.SetEAXParameters(item.Type, item.Volume, item.Decay, item.Damp));
         }
 
-        public EnvironmentItem GetEnvironment()
+        public EnvironmentInfo GetEnvironment()
         {
             EAXEnvironment environment = EAXEnvironment.Generic;
             var volume = 0f;
             var decay = 0f;
             var damp = 0f;
             BassException.ThrowIfTrue(() => !BassContextNativeMethods.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
-            return new EnvironmentItem
+            return new EnvironmentInfo
             {
                 Type = environment,
                 Volume = volume,

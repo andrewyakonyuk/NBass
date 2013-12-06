@@ -3,98 +3,31 @@ using System.Runtime.InteropServices;
 
 namespace NBass
 {
-    /// <summary>
-    /// Summary description for Enums.
-    /// </summary>
-
-    [Flags()]
-    public enum ChannelDataFlags : long
+    [Flags]
+    internal enum ChannelDataFlags : long
     {
         //  BASS_ChannelGetData flags
         [MarshalAs(UnmanagedType.U4)]
         FFT512 = 0x80000000, //  512 sample FFT
+
         [MarshalAs(UnmanagedType.U4)]
         FFT1024 = 0x80000001, //  1024 FFT
+
         [MarshalAs(UnmanagedType.U4)]
         FFT2048 = 0x80000002, //  2048 FFT
+
         [MarshalAs(UnmanagedType.U4)]
         SFFT512 = 0x80000010, //  512 sample FFT
+
         [MarshalAs(UnmanagedType.U4)]
         SFFT1024 = 0x80000011, //  1024 stereo sample FFT
+
         [MarshalAs(UnmanagedType.U4)]
         SFFT2048 = 0x80000012, //  2048 stereo FFT
     }
 
-    [Flags()]
-    public enum MusicFlags
+    internal enum SyncType : long
     {
-        // ***************
-        // * Music flags *
-        // ***************
-        NormalRamping = 0x0001, //  normal ramping
-        SensitiveRamping = 0x0002, //  sensitive ramping
-        //  Ramping doesn// t take a lot of extra processing and improve
-        //  the sound quality by removing "clicks". Sensitive ramping will
-        //  leave sharp attacked samples, unlike normal ramping.
-        Loop = 0x0004, //  loop music
-        FastTracker2Mode = 0x0010, //  play .MOD as FastTracker 2 does
-        ProTracker1Mode = 0x0020, //  play .MOD as ProTracker 1 does
-        Mono = 0x0040, //  force mono mixing (less CPU usage)
-        ThreeDee = 0x0080, //  enable 3D functionality
-        PositionReset = 0x0100, //  stop all notes when moving position
-        SurroundMode1 = 0x0200, // surround sound
-        SurroundMode2 = 0x0400, // surround sound (mode 2)
-        StopOnBackJump = 0x0800, // stop the music on a backwards jump effect
-        FX = 0x1000, // enable DX8 effects
-        CalculateLength = 0x2000, // calculate playback length
-        DecodeOnly = 0x200000, // don// t play the music, only decode (BASS_ChannelGetData)
-        NoLoadSample = 0x400000, //  don// t load the samples
-    }
-
-    [Flags()]
-    public enum StreamFlags
-    {
-        Default = DeviceSetupFlags.Default,
-        EightBits = DeviceSetupFlags.EightBits, // use 8 bit resolution, else 16 bit
-        Mono = DeviceSetupFlags.Mono, // use mono, else stereo
-        ThreeDee = DeviceSetupFlags.ThreeDee, // enable 3D functionality
-        FX = SampleInfoFlags.FX,
-        HalfRate =   65536, //  reduced quality MP3/MP2/MP1 (half sample rate)
-        SetPosition = 131072, //  enable pin-point seeking on the MP3/MP2/MP1/OGG
-        AutoFree =  262144, //  automatically free the stream when it stop/ends
-        DecodeOnly = 0x200000, //  don't play the stream, only decode (BASS_ChannelGetData)
-        Unicode = -2147483648
-    }
-
-    public enum StreamPlayFlags
-    {
-        Default = 0,
-        Loop = SampleInfoFlags.Loop,
-    }
-
-    [Flags()]
-    public enum SampleInfoFlags
-    {
-        // *********************
-        // * Sample info flags *
-        // *********************
-        Default = 0x0000,
-        EightBits = 0x0001, //  8 bit, else 16 bit
-        Mono = 0x0002, //  mono, else stereo
-        Loop = 0x0004, //  looped
-        ThreeDee = 0x0008, //  3D functionality enabled
-        Software = 0x0010, //  it// s NOT using hardware mixing
-        MuteMax = 0x0020, //  muted at max distance (3D only)
-        VAM = 0x0040, //  uses the DX7 voice allocation & management
-        FX = 0x0080, //  the DX8 effects are enabled
-        OverrideVolume = 0x00010000, //  override lowest volume
-        OverridePosition = 0x00020000, //  override longest playing
-        OverrideDistance = 0x00030000 //  override furthest from listener (3D only)
-    }
-
-    enum SyncType : long
-    {
-
         // **********************************************************************
         // * Sync types (with BASS_ChannelSetSync() "param" and SYNCPROC "data" *
         // * definitions) & flags.                                              *
@@ -108,38 +41,46 @@ namespace NBass
         //  data : not used
         [MarshalAs(UnmanagedType.U4)]
         POS = 0,
+
         [MarshalAs(UnmanagedType.U4)]
         MUSICPOS = 0,
+
         //  Sync when an instrument (sample for the non-instrument based formats)
         //  is played in a music (not including retrigs).
         //  param: LOWORD=instrument (1=first) HIWORD=note (0=c0...119=b9, -1=all)
         //  data : LOWORD=note HIWORD=volume (0-64)
         [MarshalAs(UnmanagedType.U4)]
         MUSICINST = 1,
+
         //  Sync when a music or file stream reaches the end.
         //  param: not used
         //  data : not used
         [MarshalAs(UnmanagedType.U4)]
         END = 2,
+
         //  Sync when the "sync" effect (XM/MTM/MOD: E8x/Wxx, IT/S3M: S2x) is used.
         //  param: 0:data=pos, 1:data="x" value
         //  data : param=0: LOWORD=order HIWORD=row, param=1: "x" value
         [MarshalAs(UnmanagedType.U4)]
         MUSICFX = 3,
+
         //  FLAG: post a Windows message (instead of callback)
         //  When using a window message "callback", the message to post is given in the "proc"
         //  parameter of BASS_ChannelSetSync, and is posted to the window specified in the BASS_Init
         //  call. The message parameters are: WPARAM = data, LPARAM = user.
         [MarshalAs(UnmanagedType.U4)]
         META = 4,
+
         //  Sync when metadata is received in a Shoutcast stream.
         //  param: not used
         //  data : pointer to the metadata
         [MarshalAs(UnmanagedType.U4)]
         MESSAGE = 0x20000000,
+
         // FLAG: sync at mixtime, else at playtime
         [MarshalAs(UnmanagedType.U4)]
         MIXTIME = 0x40000000,
+
         //  FLAG: sync only once, else continuously
         [MarshalAs(UnmanagedType.U4)]
         ONETIME = 0x80000000,
@@ -147,9 +88,9 @@ namespace NBass
 
     public enum ChannelFX
     {
-
         // DX8 effect types, use with BASS_ChannelSetFX
         Chorus = 0, // GUID_DSFX_STANDARD_CHORUS
+
         Compressor = 1, // GUID_DSFX_STANDARD_COMPRESSOR
         Distortion = 2, // GUID_DSFX_STANDARD_DISTORTION
         Echo = 3, // GUID_DSFX_STANDARD_ECHO
@@ -160,258 +101,82 @@ namespace NBass
         Reverb = 8, // GUID_DSFX_WAVES_REVERB
     }
 
-    [Flags()]
-    public enum DeviceSetupFlags
-    {
-        // **********************
-        // * Device setup flags *
-        // **********************
-        Default = 0x0000,
-        EightBits = 0x0001, // use 8 bit resolution, else 16 bit
-        Mono = 0x0002, // use mono, else stereo
-        ThreeDee = 0x0004, // enable 3D functionality
-        //  If the BASS_DEVICE_3D flag is not specified when initilizing BASS,
-        //  then the 3D flags (BASS_SAMPLE_3D and BASS_Music3D) are ignored when
-        //  loading/creating a sample/stream/music.
-        Latency = 0x100,  // calculate device latency (BASS_INFO struct)
-        CPSpeakers = 0x400,  // detect speakers via Windows control panel
-        Speakers = 0x800,  // force enabling of speaker assignment
-        NoSpeaker = 0x1000, // ignore speaker arrangement
-        Dmix = 0x2000, // use ALSA "dmix" plugin
-        Freq = 0x4000  // set device sample rate
-    }
-
-    public enum Channel3DMode
-    {
-        // ********************
-        // * 3D channel modes *
-        // ********************
-        Normal = 0,
-        //  normal 3D processing
-        Relative = 1,
-        //  The channel// s 3D position (position/velocity/orientation) are relative to
-        //  the listener. When the listener// s position/velocity/orientation is changed
-        //  with BASS_Set3DPosition, the channel// s position relative to the listener does
-        //  not change.
-        Off = 2,
-        //  Turn off 3D processing on the channel, the sound will be played
-        //  in the center.
-    }
-
-    public enum EAXEnvironment
-    {
-        // ****************************************************
-        // * EAX environments, use with BASS_SetEAXParameters *
-        // ****************************************************
-        Generic = 0,
-        PaddedCell,
-        Room,
-        Bathroom,
-        LivingRoom,
-        StoneRoom,
-        Auditorium,
-        ConcertHall,
-        Cave,
-        Arena,
-        Hangar,
-        CarpetedHallway,
-        Hallway,
-        StoneCorridor,
-        Alley,
-        Forest,
-        City,
-        Mountains,
-        Quarry,
-        Plain,
-        ParkingLot,
-        SewerPipe,
-        Underwater,
-        Drugged,
-        Dizzy,
-        Psychotic,
-        //  total number of environments
-        //COUNT = 26,
-    }
-
-    // *************************************************************
-    // * EAX presets, usage: BASS_SetEAXParametersVB(EAX_PRESET_xxx) *
-    // *************************************************************
-    public enum BASSEAXPreset
-    {
-        //Off = 0,
-        Generic = 1, // same as above just starting at 1. 
-        PaddedCell,
-        Room,
-        Bathroom,
-        LivingRoom,
-        StoneRoom,
-        Auditorium,
-        ConcertHall,
-        Cave,
-        Arena,
-        Hangar,
-        CarpetedHallway,
-        Hallway,
-        StoneCorridor,
-        Alley,
-        Forest,
-        City,
-        Mountains,
-        Quarry,
-        Plain,
-        ParkingLot,
-        SewerPipe,
-        Underwater,
-        Drugged,
-        Dizzy,
-        Psychotic,
-    }
-
-    public enum Algorithm3DMode
-    {
-        // **********************************************************************
-        // * software 3D mixing algorithm modes (used with BASS_Set3DAlgorithm) *
-        // **********************************************************************
-        //  default algorithm (currently translates to BASS_3DALG_OFF)
-        Default = 0,
-        //  Uses normal left and right panning. The vertical axis is ignored except for
-        // scaling of volume due to distance. Doppler shift and volume scaling are still
-        // applied, but the 3D filtering is not performed. This is the most CPU efficient
-        // software implementation, but provides no virtual 3D audio effect. Head Related
-        // Transfer Function processing will not be done. Since only normal stereo panning
-        // is used, a channel using this algorithm may be accelerated by a 2D hardware
-        // voice if no free 3D hardware voices are available.
-        Off = 1,
-        //  This algorithm gives the highest quality 3D audio effect, but uses more CPU.
-        //  Requires Windows 98 2nd Edition or Windows 2000 that uses WDM drivers, if this
-        //  mode is not available then BASS_3DALG_OFF will be used instead.
-        Full = 2,
-        //  This algorithm gives a good 3D audio effect, and uses less CPU than the FULL
-        //  mode. Requires Windows 98 2nd Edition or Windows 2000 that uses WDM drivers, if
-        //  this mode is not available then BASS_3DALG_OFF will be used instead.
-        Light = 3,
-    }
-
-    [Flags()]
+    //TODO remove?
+    [Flags]
     public enum DeviceCaps
     {
         // ***********************************
         // * BASS_INFO flags (from DSOUND.H) *
         // ***********************************
         ContinuousRate = 0x010,
+
         //  supports all sample rates between min/maxrate
         EmulateDriver = 0x020,
+
         //  device does NOT have hardware DirectSound support
         Certified = 0x040,
+
         //  device driver has been certified by Microsoft
         //  The following flags tell what type of samples are supported by HARDWARE
         //  mixing, all these formats are supported by SOFTWARE mixing
         SecondaryMono = 0x100, //  mono
+
         SecondaryStereo = 0x200, //  stereo
         Secondary8Bit = 0x400, //  8 bit
         Secondary16Bit = 0x800, //  16 bit
-    }
-
-    [Flags()]
-    public enum DeviceRecCaps
-    {
-        // *****************************************
-        // * BASS_RECORDINFO flags (from DSOUND.H) *
-        // *****************************************
-        EmulateDriver = DeviceCaps.EmulateDriver,
-        //  device does NOT have hardware DirectSound recording support
-        Certified = DeviceCaps.Certified,
-        //  device driver has been certified by Microsoft
-    }
-
-    public enum DirectSoundObject
-    {
-        // **************************************************************
-        // * DirectSound interfaces (for use with BASS_GetDSoundObject) *
-        // **************************************************************
-        DS = 1, //  DirectSound
-        DS3DL = 2 // IDirectSound3DListener
-    }
-
-    public enum VoiceAllocation
-    {
-        // ******************************
-        // * DX7 voice allocation flags *
-        // ******************************
-        //  Play the sample in hardware. If no hardware voices are available then
-        //  the "play" call will fail
-        Hardware = 1,
-        //  Play the sample in software (ie. non-accelerated). No other VAM flags
-        // may be used together with this flag.
-        Software = 2
-    }
-
-    [Flags()]
-    public enum VoiceManagementFlags
-    {
-        // ******************************
-        // * DX7 voice management flags *
-        // ******************************
-        //  These flags enable hardware resource stealing... if the hardware has no
-        //  available voices, a currently playing buffer will be stopped to make room for
-        //  the new buffer. NOTE: only samples loaded/created with the BASS_SAMPLE_VAM
-        //  flag are considered for termination by the DX7 voice management.
-
-        //  If there are no free hardware voices, the buffer to be terminated will be
-        //  the one with the least time left to play.
-        TERM_TIME = 4,
-        //  If there are no free hardware voices, the buffer to be terminated will be
-        //  one that was loaded/created with the BASS_SAMPLE_MUTEMAX flag and is beyond
-        //  it // s max distance. If there are no buffers that match this criteria, then the
-        //  "play" call will fail.
-        TERM_DIST = 8,
-        //  If there are no free hardware voices, the buffer to be terminated will be
-        //  the one with the lowest priority.
-        PRIO = 16,
     }
 
     /// <summary>
     /// Channel Position Mode flags to be used with e.g. <see cref="M:Un4seen.Bass.Bass.BASS_ChannelGetLength(System.Int32,Un4seen.Bass.BASSMode)" />, <see cref="M:Un4seen.Bass.Bass.BASS_ChannelGetPosition(System.Int32,Un4seen.Bass.BASSMode)" />, <see cref="M:Un4seen.Bass.Bass.BASS_ChannelSetPosition(System.Int32,System.Int64,Un4seen.Bass.BASSMode)" /> or <see cref="M:Un4seen.Bass.Bass.BASS_StreamGetFilePosition(System.Int32,Un4seen.Bass.BASSStreamFilePosition)" />.
     /// </summary>
     [Flags]
-    public enum BassMode
+    internal enum BassMode
     {
         /// <summary>
         /// Byte position.
         /// </summary>
         POS_BYTES = 0,
+
         /// <summary>
         /// Order.Row position (HMUSIC only).
         /// </summary>
         POS_MusicORDERS = 1,
+
         /// <summary>
         /// Tick position (MIDI streams only).
         /// </summary>
         POS_MIDI_TICK = 2,
+
         /// <summary>
         /// OGG bitstream number.
         /// </summary>
         POS_OGG = 3,
+
         /// <summary>
         /// MOD Music Flag: Stop all notes when moving position.
         /// </summary>
         MusicPOSRESET = 32768,
+
         /// <summary>
         /// MOD Music Flag: Stop all notes and reset bmp/etc when moving position.
         /// </summary>
         MusicPOSRESETEX = 4194304,
+
         /// <summary>
         /// Mixer Flag: Don't ramp-in the start after seeking.
         /// </summary>
         MIXER_NORAMPIN = 8388608,
+
         /// <summary>
         /// Get the decoding (not playing) position.
         /// </summary>
         POS_DECODE = 268435456,
+
         /// <summary>
         /// Flag: decode to the position instead of seeking.
         /// </summary>
         POS_DECODETO = 536870912,
+
         /// <summary>
         /// Midi Add-On: Let the old sound decay naturally (including reverb) when changing the position, including looping and such can also be used in <see cref="M:Un4seen.Bass.Bass.BASS_ChannelSetPosition(System.Int32,System.Int64,Un4seen.Bass.BASSMode)" /> calls to have it apply to particular position changes.
         /// </summary>
@@ -421,7 +186,7 @@ namespace NBass
     /// <summary>
     /// Channel attribute options used by <see cref="M:Un4seen.Bass.Bass.BASS_ChannelSetAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single)" /> and <see cref="M:Un4seen.Bass.Bass.BASS_ChannelGetAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single@)" />.
     /// </summary>
-    public enum Attribute
+    internal enum Attribute
     {
         /// <summary>
         /// The sample rate of a channel.
@@ -432,6 +197,7 @@ namespace NBass
         /// <para>It requires an increased amount of CPU processing to play MOD musics and streams at increased sample rates. If you plan to play MOD musics or streams at greatly increased sample rates, then you should increase the buffer lengths (<see cref="F:Un4seen.Bass.BASSConfig.CONFIG_BUFFER" />) to avoid possible break-ups in the sound.</para>
         /// </summary>
         FREQ = 1,
+
         /// <summary>
         /// The volume level of a channel.
         /// <para>volume: The volume level... 0 (silent) to 1 (full). This can go above 1.0 on decoding channels.</para>
@@ -439,6 +205,7 @@ namespace NBass
         /// <para>When using <see cref="M:Un4seen.Bass.Bass.ChannelSlideAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single,System.Int32)" /> to slide this attribute, a negative volume value can be used to fade-out and then stop the channel.</para>
         /// </summary>
         VOL,
+
         /// <summary>
         /// The panning/balance position of a channel.
         /// <para>pan: The pan position... -1 (full left) to +1 (full right), 0 = centre.</para>
@@ -448,6 +215,7 @@ namespace NBass
         /// <para>On Windows, this attribute has no effect when <a href="../Overview.html#SpeakerAssignement">speaker assignment</a> is used, except on Windows Vista and newer with the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_VISTA_SPEAKERS" /> config option enabled. Balance control could be implemented via a <see cref="T:Un4seen.Bass.DSPPROC">DSP function</see> instead</para>
         /// </summary>
         PAN,
+
         /// <summary>
         /// The wet (reverb) / dry (no reverb) mix ratio on a sample, stream, or MOD music channel with 3D functionality.
         /// <para>mix: The wet / dry ratio... 0 (full dry) to 1 (full wet), -1 = automatically calculate the mix based on the distance (the default).</para>
@@ -461,6 +229,7 @@ namespace NBass
         /// <para>EAX is only supported on Windows.</para>
         /// </summary>
         EAXMIX,
+
         /// <summary>
         /// Non-Windows: Disable playback buffering?
         /// <para>nobuffer: Disable playback buffering... 0 = no, else yes..</para>
@@ -471,6 +240,7 @@ namespace NBass
         /// <para>This attribute is not available on Windows, as BASS does not generate the final mix.</para>
         /// </summary>
         NOBUFFER,
+
         /// <summary>
         /// The CPU usage of a channel.
         /// <para>cpu: The CPU usage (in percentage).</para>
@@ -480,6 +250,7 @@ namespace NBass
         /// <para>This attribute is read-only, so cannot be modified via <see cref="M:Un4seen.Bass.Bass.ChannelSetAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single)" />.</para>
         /// </summary>
         CPU = 7,
+
         /// <summary>
         /// The sample rate conversion quality of a channel.
         /// <para>quality: The sample rate conversion quality... 0 = linear interpolation, 1 = 8 point sinc interpolation, 2 = 16 point sinc interpolation, 3 = 32 point sinc interpolation. Other values are also accepted but will be interpreted as 0 or 3, depending on whether they are lower or higher.</para>
@@ -491,6 +262,7 @@ namespace NBass
         /// <para>On Windows, sample rate conversion is handled by Windows or the output device/driver rather than BASS, so this setting has no effect on playback there.</para>
         /// </summary>
         SRC,
+
         /// <summary>
         /// The amplification level of a MOD music.
         /// <para>amp: Amplification level... 0 (min) to 100 (max). This will be rounded down to a whole number.</para>
@@ -500,12 +272,14 @@ namespace NBass
         /// <para>During playback, the effect of changes to this attribute are not heard instantaneously, due to buffering. To reduce the delay, use the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_BUFFER" /> config option to reduce the buffer length.</para>
         /// </summary>
         MusicAMPLIFY = 256,
+
         /// <summary>
         /// The pan separation level of a MOD music.
         /// <para>pansep: Pan separation... 0 (min) to 100 (max), 50 = linear. This will be rounded down to a whole number.</para>
         /// <para>By default BASS uses a linear panning "curve". If you want to use the panning of FT2, use a pan separation setting of around 35. To use the Amiga panning (ie. full left and right) set it to 100.</para>
         /// </summary>
         MusicPANSEP,
+
         /// <summary>
         /// The position scaler of a MOD music.
         /// <para>scale: The scaler... 1 (min) to 256 (max). This will be rounded down to a whole number.</para>
@@ -540,6 +314,7 @@ namespace NBass
         /// </para>
         /// </summary>
         MusicPSCALER,
+
         /// <summary>
         /// The BPM of a MOD music.
         /// <para>bpm: The BPM... 1 (min) to 255 (max). This will be rounded down to a whole number.</para>
@@ -548,6 +323,7 @@ namespace NBass
         /// <para>During playback, the effect of changes to this attribute are not heard instantaneously, due to buffering. To reduce the delay, use the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_BUFFER" /> config option to reduce the buffer length.</para>
         /// </summary>
         MusicBPM,
+
         /// <summary>
         /// The speed of a MOD music.
         /// <para>speed: The speed... 0 (min) to 255 (max). This will be rounded down to a whole number.</para>
@@ -556,6 +332,7 @@ namespace NBass
         /// <para>During playback, the effect of changes to this attribute are not heard instantaneously, due to buffering. To reduce the delay, use the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_BUFFER" /> config option to reduce the buffer length.</para>
         /// </summary>
         MusicSPEED,
+
         /// <summary>
         /// The global volume level of a MOD music.
         /// <para>volume: The global volume level... 0 (min) to 64 (max, 128 for IT format). This will be rounded down to a whole number.</para>
@@ -564,6 +341,7 @@ namespace NBass
         /// <para>During playback, the effect of changes to this attribute are not heard instantaneously, due to buffering. To reduce the delay, use the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_BUFFER" /> config option to reduce the buffer length.</para>
         /// </summary>
         MusicVOL_GLOBAL,
+
         /// <summary>
         /// The volume level of a channel in a MOD music + <i>channel#</i>.
         /// <para>channel: The channel to set the volume of... 0 = 1st channel.</para>
@@ -579,7 +357,7 @@ namespace NBass
         /// float dummy;
         /// while (Bass.ChannelGetAttribute(music, (BASSAttribute)((int)MusicVOL_CHAN + channels), ref dummy))
         /// {
-        ///   channels++; 
+        ///   channels++;
         /// }
         /// </code>
         /// <code lang="vbnet">
@@ -593,6 +371,7 @@ namespace NBass
         /// </para>
         /// </summary>
         MusicVOL_CHAN = 512,
+
         /// <summary>
         /// The volume level of an instrument in a MOD music + <i>inst#</i>.
         /// <para>inst: The instrument to set the volume of... 0 = 1st instrument.</para>
@@ -608,7 +387,7 @@ namespace NBass
         /// float dummy;
         /// while (Bass.ChannelGetAttribute(music, (BASSAttribute)((int)BASSAttribute.MusicVOL_INST + instruments), ref dummy))
         /// {
-        ///   instruments++; 
+        ///   instruments++;
         /// }
         /// </code>
         /// <code lang="vbnet">
@@ -622,62 +401,74 @@ namespace NBass
         /// </para>
         /// </summary>
         MusicVOL_INST = 768,
+
         /// <summary>
         /// FX Tempo: The Tempo in percents (-95%..0..+5000%).
         /// </summary>
         TEMPO = 65536,
+
         /// <summary>
         /// FX Tempo: The Pitch in semitones (-60..0..+60).
         /// </summary>
         TEMPO_PITCH,
+
         /// <summary>
         /// FX Tempo: The Samplerate in Hz, but calculates by the same % as TEMPO.
         /// </summary>
         TEMPO_FREQ,
+
         /// <summary>
         /// FX Tempo Option: Use FIR low-pass (anti-alias) filter (gain speed, lose quality)? <see langword="true" />=1 (default), <see langword="false" />=0.
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// <para>On iOS, Android, WinCE and Linux ARM platforms this is by default disabled for lower CPU usage.</para>
         /// </summary>
         TEMPO_OPTION_USE_AA_FILTER = 65552,
+
         /// <summary>
         /// FX Tempo Option: FIR low-pass (anti-alias) filter length in taps (8 .. 128 taps, default = 32, should be %4).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_AA_FILTER_LENGTH,
+
         /// <summary>
         /// FX Tempo Option: Use quicker tempo change algorithm (gain speed, lose quality)? <see langword="true" />=1, <see langword="false" />=0 (default).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_USE_QUICKALGO,
+
         /// <summary>
         /// FX Tempo Option: Tempo Sequence in milliseconds (default = 82).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_SEQUENCE_MS,
+
         /// <summary>
         /// FX Tempo Option: SeekWindow in milliseconds (default = 14).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_SEEKWINDOW_MS,
+
         /// <summary>
         /// FX Tempo Option: Tempo Overlap in milliseconds (default = 12).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_OVERLAP_MS,
+
         /// <summary>
         /// FX Tempo Option: Prevents clicks with tempo changes (default = FALSE).
         /// <para>See <see cref="M:Un4seen.Bass.AddOn.Fx.BassFx.FX_TempoCreate(System.Int32,Un4seen.Bass.BASSFlag)" /> for details.</para>
         /// </summary>
         TEMPO_OPTION_PREVENT_CLICK,
+
         /// <summary>
         /// FX Reverse: The Playback direction (-1=FX_RVS_REVERSE or 1=FX_RVS_FORWARD).
         /// </summary>
         REVERSE_DIR = 69632,
+
         /// <summary>
         /// BASSMIDI: Gets the Pulses Per Quarter Note (or ticks per beat) value of the MIDI file.
         /// <para>ppqn: The PPQN value.</para>
-        /// <para>This attribute is the number of ticks per beat as defined by the MIDI file; it will be 0 for MIDI streams created via <see cref="M:Un4seen.Bass.AddOn.Midi.BassMidi.MIDI_StreamCreate(System.Int32,Un4seen.Bass.BASSFlag,System.Int32)" />, 
+        /// <para>This attribute is the number of ticks per beat as defined by the MIDI file; it will be 0 for MIDI streams created via <see cref="M:Un4seen.Bass.AddOn.Midi.BassMidi.MIDI_StreamCreate(System.Int32,Un4seen.Bass.BASSFlag,System.Int32)" />,
         /// It is also read-only, so can't be modified via <see cref="M:Un4seen.Bass.Bass.ChannelSetAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single)" />.</para>
         /// <para>
         /// <example>
@@ -689,15 +480,16 @@ namespace NBass
         /// float beat = tick / ppqn;
         /// </code>
         /// <code lang="vbnet">
-        /// Dim ppqn As Single 
-        /// Bass.ChannelGetAttribute(midi, BASSAttribute.MIDI_PPQN, ppqn) 
-        /// Dim tick As Long = Bass.ChannelGetPosition(midi, BASSMode.POS_MIDI_TICK) 
-        /// Dim beat As Single = tick / ppqn 
+        /// Dim ppqn As Single
+        /// Bass.ChannelGetAttribute(midi, BASSAttribute.MIDI_PPQN, ppqn)
+        /// Dim tick As Long = Bass.ChannelGetPosition(midi, BASSMode.POS_MIDI_TICK)
+        /// Dim beat As Single = tick / ppqn
         /// </code>
         /// </example>
         /// </para>
         /// </summary>
         MIDI_PPQN = 73728,
+
         /// <summary>
         /// BASSMIDI: The maximum percentage of CPU time that a MIDI stream can use.
         /// <para>limit: The CPU usage limit... 0 to 100, 0 = unlimited.</para>
@@ -707,12 +499,14 @@ namespace NBass
         /// <para>By default, a MIDI stream will have no CPU limit.</para>
         /// </summary>
         MIDI_CPU,
+
         /// <summary>
         /// BASSMIDI: The number of MIDI channels in a MIDI stream.
         /// <para>channels: The number of MIDI channels... 1 (min) - 128 (max). For a MIDI file stream, the minimum is 16.</para>
         /// <para>New channels are melodic by default. Any notes playing on a removed channel are immediately stopped.</para>
         /// </summary>
         MIDI_CHANS,
+
         /// <summary>
         /// BASSMIDI: The maximum number of samples to play at a time (polyphony) in a MIDI stream.
         /// <para>voices: The number of voices... 1 (min) - 500 (max).</para>
@@ -720,12 +514,14 @@ namespace NBass
         /// <para>A MIDI stream will initially have a default number of voices as determined by the <see cref="F:Un4seen.Bass.BASSConfig.CONFIG_MIDI_VOICES" /> config option.</para>
         /// </summary>
         MIDI_VOICES,
+
         /// <summary>
         /// BASSMIDI: The number of samples currently playing in a MIDI stream.
         /// <para>voices: The number of voices.</para>
         /// <para>This attribute is read-only, so cannot be modified via <see cref="M:Un4seen.Bass.Bass.ChannelSetAttribute(System.Int32,Un4seen.Bass.BASSAttribute,System.Single)" />.</para>
         /// </summary>
         MIDI_VOICES_ACTIVE,
+
         /// <summary>
         /// BASSMIDI: The volume level of a track in a MIDI file stream + <i>track#</i>.
         /// <para>track#: The track to set the volume of... 0 = first track.</para>
@@ -741,7 +537,7 @@ namespace NBass
         /// float dummy;
         /// while (Bass.ChannelGetAttribute(midi, (BASSAttribute)((int)BASSAttribute.MIDI_TRACK_VOL + tracks), ref dummy))
         /// {
-        ///   tracks++; 
+        ///   tracks++;
         /// }
         /// </code>
         /// <code lang="vbnet">
@@ -755,6 +551,7 @@ namespace NBass
         /// </para>
         /// </summary>
         MIDI_TRACK_VOL = 73984,
+
         /// <summary>
         /// BASSOPUS: The sample rate of an Opus stream's source material.
         /// <para>freq: The sample rate.</para>
@@ -764,11 +561,8 @@ namespace NBass
         OPUS_ORIGFREQ = 77824
     }
 
-    public enum Tag
+    internal enum Tag
     {
-        // **********************************************
-        // * BASS_StreamGetTags flags : what// s returned *
-        // **********************************************
         ID3 = 0, // ID3v1 tags : 128 byte block
         ID3V2 = 1, // ID3v2 tags : variable length block
         OGG = 2, // OGG comments : array of null-terminated strings
@@ -777,220 +571,30 @@ namespace NBass
         META = 5, // ICY metadata : null-terminated string
     }
 
-    [Flags]
-    public enum ChannelType
-    {
-        /// <summary>
-        /// Unknown channel format.
-        /// </summary>
-        Unknown = 0,
-        /// <summary>
-        /// Sample channel. (HCHANNEL)
-        /// </summary>
-        Sample = 1,
-        /// <summary>
-        /// Recording channel. (HRECORD)
-        /// </summary>
-        Record = 2,
-        /// <summary>
-        /// MO3 format music.
-        /// </summary>
-        MusicMO3 = 256,
-        /// <summary>
-        /// User sample stream. This can also be used as a flag to test if the channel is any kind of HSTREAM.
-        /// </summary>
-        Stream = 65536,
-        /// <summary>
-        /// OGG format stream.
-        /// </summary>
-        StreamOGG = 65538,
-        /// <summary>
-        /// MP1 format stream.
-        /// </summary>
-        StreamMP1 = 65539,
-        /// <summary>
-        /// MP2 format stream.
-        /// </summary>
-        StreamMP2 = 65540,
-        /// <summary>
-        /// MP2 format stream.
-        /// </summary>
-        StreamMP3 = 65541,
-        /// <summary>
-        /// WAV format stream.
-        /// </summary>
-        StreamAIFF = 65542,
-        /// <summary>
-        /// CoreAudio codec stream. Additional information is avaliable via the <see cref="T:Un4seen.Bass.BASS_TAG_CACODEC" /> tag.
-        /// </summary>
-        StreamCA = 65543,
-        /// <summary>
-        /// Media Foundation codec stream. Additional information is avaliable via the <see cref="F:Un4seen.Bass.BASSTag.BASS_TAG_MF" /> tag.
-        /// </summary>
-        StreamMF = 65544,
-        /// <summary>
-        /// BASSmix mixer stream.
-        /// </summary>
-        StreamMIXER = 67584,
-        /// <summary>
-        /// BASSmix splitter stream.
-        /// </summary>
-        StreamSPLIT = 67585,
-        /// <summary>
-        /// WAV format stream, LOWORD=codec.
-        /// </summary>
-        StreamWAV = 262144,
-        /// <summary>
-        /// WAV format stream, PCM 16-bit.
-        /// </summary>
-        StreamWAV_PCM = 327681,
-        /// <summary>
-        /// WAV format stream, FLOAT 32-bit.
-        /// </summary>
-        StreamWAV_FLOAT = 327683,
-        /// <summary>
-        /// MOD format music. This can also be used as a flag to test if the channel is any kind of HMUSIC.
-        /// </summary>
-        MusicMOD = 131072,
-        /// <summary>
-        /// MTM format music.
-        /// </summary>
-        MusicMTM = 131073,
-        /// <summary>
-        /// S3M format music.
-        /// </summary>
-        MusicS3M = 131074,
-        /// <summary>
-        /// XM format music.
-        /// </summary>
-        MusicXM = 131075,
-        /// <summary>
-        /// IT format music.
-        /// </summary>
-        MusicIT = 131076,
-        /// <summary>
-        /// WavPack Lossless format stream.
-        /// </summary>
-        StreamWV = 66816,
-        /// <summary>
-        ///  WavPack Hybrid Lossless format stream.
-        /// </summary>
-        StreamWV_H = 66817,
-        /// <summary>
-        /// WavPack Lossy format stream.
-        /// </summary>
-        StreamWV_L = 66818,
-        /// <summary>
-        ///  WavPack Hybrid Lossy format stream.
-        /// </summary>
-        StreamWV_LH = 66819,
-        /// <summary>
-        /// Audio-CD, CDA
-        /// </summary>
-        StreamCD = 66048,
-        /// <summary>
-        /// WMA format stream.
-        /// </summary>
-        StreamWMA = 66304,
-        /// <summary>
-        /// MP3 over WMA format stream.
-        /// </summary>
-        StreamWMA_MP3 = 66305,
-        /// <summary>
-        /// FLAC format stream.
-        /// </summary>
-        StreamFLAC = 67840,
-        /// <summary>
-        /// FLAC OGG format stream.
-        /// </summary>
-        StreamFLAC_OGG = 67841,
-        /// <summary>
-        /// Optimfrog format stream.
-        /// </summary>
-        StreamOFR = 67072,
-        /// <summary>
-        /// APE format stream.
-        /// </summary>
-        StreamAPE = 67328,
-        /// <summary>
-        /// MPC format stream.
-        /// </summary>
-        StreamMPC = 68096,
-        /// <summary>
-        /// AAC format stream.
-        /// </summary>
-        StreamAAC = 68352,
-        /// <summary>
-        /// MP4 format stream.
-        /// </summary>
-        StreamMP4 = 68353,
-        /// <summary>
-        /// Speex format stream.
-        /// </summary>
-        StreamSPX = 68608,
-        /// <summary>
-        /// Apple Lossless (ALAC) format stream.
-        /// </summary>
-        StreamALAC = 69120,
-        /// <summary>
-        /// TTA format stream.
-        /// </summary>
-        StreamTTA = 69376,
-        /// <summary>
-        /// AC3 format stream.
-        /// </summary>
-        StreamAC3 = 69632,
-        /// <summary>
-        /// Opus format stream.
-        /// </summary>
-        StreamOPUS = 70144,
-        /// <summary>
-        /// Winamp input format stream.
-        /// </summary>
-        StreamWINAMP = 66560,
-        /// <summary>
-        /// MIDI sound format stream.
-        /// </summary>
-        StreamMIDI = 68864,
-        /// <summary>
-        /// ADX format stream.
-        /// <para>ADX is a lossy proprietary audio storage and compression format developed by CRI Middleware specifically for use in video games, it is derived from ADPCM.</para>
-        /// </summary>
-        StreamADX = 126976,
-        /// <summary>
-        /// AIX format stream.
-        /// <para>Only for ADX of all versions (with AIXP support).</para>
-        /// </summary>
-        StreamAIX = 126977,
-        /// <summary>
-        /// Video format stream.
-        /// </summary>
-        StreamVideo = 69888
-    }
-
     internal enum Configuration
     {
-        
         Buffer,
-        
+
         UpdatePeriod,
-        
+
         GlobalSampleVolume = 4,
-        
+
         GlobalStreamVolume,
-       
+
         GlobalMusicVolume,
+
         /// <summary>
         /// Volume translation curve.
         /// <para>logvol (bool): Volume curve... <see langword="false" /> = linear, <see langword="true" /> = logarithmic.</para>
-        /// <para>DirectSound uses logarithmic volume and panning curves, which can be awkward to work with. 
-        /// For example, with a logarithmic curve, the audible difference between 10000 and 9000, is not the same as between 9000 and 8000. 
+        /// <para>DirectSound uses logarithmic volume and panning curves, which can be awkward to work with.
+        /// For example, with a logarithmic curve, the audible difference between 10000 and 9000, is not the same as between 9000 and 8000.
         /// With a linear "curve" the audible difference is spread equally across the whole range of values, so in the previous example the audible difference between 10000 and 9000, and between 9000 and 8000 would be identical.</para>
-        /// <para>When using the linear curve, the volume range is from 0% (silent) to 100% (full). 
+        /// <para>When using the linear curve, the volume range is from 0% (silent) to 100% (full).
         /// When using the logarithmic curve, the volume range is from -100 dB (effectively silent) to 0 dB (full). For example, a volume level of 0.5 is 50% linear or -50 dB logarithmic.</para>
         /// <para>The linear curve is used by default.</para>
         /// </summary>
         BASS_CONFIG_CURVE_VOL,
+
         /// <summary>
         /// Panning translation curve.
         /// <para>logpan (bool): Panning curve... <see langword="false" /> = linear, <see langword="true" /> = logarithmic.</para>
@@ -998,6 +602,7 @@ namespace NBass
         /// <para>The linear curve is used by default.</para>
         /// </summary>
         BASS_CONFIG_CURVE_PAN,
+
         /// <summary>
         /// Pass 32-bit floating-point sample data to all DSP functions?
         /// <para>floatdsp (bool): If <see langword="true" />, 32-bit floating-point sample data is passed to all <see cref="T:Un4seen.Bass.DSPPROC" /> callback functions.</para>
@@ -1007,6 +612,7 @@ namespace NBass
         /// <para><b>Platform-specific:</b> On Android and Windows CE, 8.24 bit fixed-point is used instead of floating-point. Floating-point DX8 effect processing requires DirectX 9 (or above) on Windows.</para>
         /// </summary>
         BASS_CONFIG_FLOATDSP,
+
         /// <summary>
         /// The 3D algorithm for software mixed 3D channels.
         /// <para>algo (int): Use one of the <see cref="T:Un4seen.Bass.BASS3DAlgorithm" /> flags.</para>
@@ -1015,12 +621,14 @@ namespace NBass
         /// <para>On Windows, DirectX 7 or above is required for this option to have effect. On other platforms, only the BASS_3DALG_DEFAULT and BASS_3DALG_OFF options are available.</para>
         /// </summary>
         BASS_CONFIG_3DALGORITHM,
+
         /// <summary>
         /// Time to wait for a server to respond to a connection request.
         /// <para>timeout (int): The time to wait, in milliseconds.</para>
         /// <para>The default timeout is 5 seconds (5000 milliseconds).</para>
         /// </summary>
         BASS_CONFIG_NET_TIMEOUT,
+
         /// <summary>
         /// Internet download buffer length.
         /// <para>length (int): The buffer length, in milliseconds.</para>
@@ -1031,6 +639,7 @@ namespace NBass
         /// <para>Using this config option only affects streams created afterwards, not any that have already been created.</para>
         /// </summary>
         BASS_CONFIG_NET_BUFFER,
+
         /// <summary>
         /// Prevent channels being played when the output is paused?
         /// <para>noplay (bool): If <see langword="true" />, channels can't be played while the output is paused.</para>
@@ -1038,6 +647,7 @@ namespace NBass
         /// <para>By default, this config option is enabled.</para>
         /// </summary>
         BASS_CONFIG_PAUSE_NOPLAY,
+
         /// <summary>
         /// Amount to pre-buffer when opening internet streams.
         /// <para>prebuf (int): Amount (percentage) to pre-buffer.</para>
@@ -1045,6 +655,7 @@ namespace NBass
         /// <para>As well as internet streams, this config setting also applies to "buffered" user file streams created with <see cref="M:Un4seen.Bass.Bass.BASS_StreamCreateFileUser(Un4seen.Bass.BASSStreamSystem,Un4seen.Bass.BASSFlag,Un4seen.Bass.BASS_FILEPROCS,System.IntPtr)" />.</para>
         /// </summary>
         BASS_CONFIG_NET_PREBUF = 15,
+
         /// <summary>
         /// "User-Agent" header.
         /// <para>agent (string pointer): The "User-Agent" header.</para>
@@ -1052,6 +663,7 @@ namespace NBass
         /// <para>Changes take effect from the next internet stream creation call.</para>
         /// </summary>
         BASS_CONFIG_NET_AGENT,
+
         /// <summary>
         /// Proxy server settings (in the form of "user:pass@server:port"... <see langword="null" /> = don't use a proxy).
         /// <para>proxy (string pointer): The proxy server settings, in the form of "user:pass@server:port"... <see langword="null" /> = don't use a proxy. "" (empty string) = use the OS's default proxy settings. If only the "user:pass@" part is specified, then those authorization credentials are used with the default proxy server. If only the "server:port" part is specified, then that proxy server is used without any authorization credentials.</para>
@@ -1059,12 +671,14 @@ namespace NBass
         /// <para>Changes take effect from the next internet stream creation call.</para>
         /// </summary>
         BASS_CONFIG_NET_PROXY,
+
         /// <summary>
         /// Use passive mode in FTP connections?
         /// <para>passive (bool): If <see langword="true" />, passive mode is used, otherwise normal/active mode is used.</para>
         /// <para>Changes take effect from the next internet stream creation call. By default, passive mode is enabled.</para>
         /// </summary>
         BASS_CONFIG_NET_PASSIVE,
+
         /// <summary>
         /// The buffer length for recording channels.
         /// <para>length (int): The buffer length in milliseconds... 1000 (min) - 5000 (max). If the length specified is outside this range, it is automatically capped.</para>
@@ -1072,13 +686,15 @@ namespace NBass
         /// <para>Using this config option only affects the recording channels that are created afterwards, not any that have already been created. So you can have channels with differing buffer lengths by using this config option each time before creating them.</para>
         /// </summary>
         BASS_CONFIG_REC_BUFFER,
+
         /// <summary>
         /// Process URLs in PLS, M3U, WPL or ASX playlists?
         /// <para>netlists (int): When to process URLs in PLS, M3U, WPL or ASX playlists... 0 = never, 1 = in <see cref="M:Un4seen.Bass.Bass.BASS_StreamCreateURL(System.String,System.Int32,Un4seen.Bass.BASSFlag,Un4seen.Bass.DOWNLOADPROC,System.IntPtr)" /> only, 2 = in <see cref="M:Un4seen.Bass.Bass.BASS_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)" /> and <see cref="M:Un4seen.Bass.Bass.BASS_StreamCreateFileUser(Un4seen.Bass.BASSStreamSystem,Un4seen.Bass.BASSFlag,Un4seen.Bass.BASS_FILEPROCS,System.IntPtr)" /> too.</para>
-        /// <para>When enabled, BASS will process PLS, M3U, WPL and ASX playlists, going through each entry until it finds a URL that it can play. 
+        /// <para>When enabled, BASS will process PLS, M3U, WPL and ASX playlists, going through each entry until it finds a URL that it can play.
         /// By default, playlist procesing is disabled.</para>
         /// </summary>
         BASS_CONFIG_NET_PLAYLIST = 21,
+
         /// <summary>
         /// The maximum number of virtual music channels (1-512) to use.
         /// <para>number (int): The maximum number of virtual music channels (1-512), ), which should be set before loading the IT file (doesn't affect already loaded files).</para>
@@ -1086,25 +702,28 @@ namespace NBass
         /// <para>Note that the virtual channel count/limit is in addition to the normal channels.</para>
         /// </summary>
         BASS_CONFIG_MUSIC_VIRTUAL,
+
         /// <summary>
         /// The amount of data to check in order to verify/detect the file format.
         /// <para>length (int): The amount of data to check, in bytes... 1000 (min) to 100000 (max). If the value specified is outside this range, it is automatically capped.</para>
-        /// <para>Of the file formats supported as standard, this setting only affects the detection of MP3/MP2/MP1 formats, 
+        /// <para>Of the file formats supported as standard, this setting only affects the detection of MP3/MP2/MP1 formats,
         /// but it may also be used by add-ons (see the documentation). For internet (and "buffered" user file) streams, a quarter of the length is used, up to a minimum of 1000 bytes.</para>
         /// <para>The verification length excludes any tags that may be at the start of the file. The default length is 16000 bytes.</para>
         /// </summary>
         BASS_CONFIG_VERIFY,
+
         /// <summary>
         /// The number of threads to use for updating playback buffers.
         /// <para>threads (int): The number of threads to use... 0 = disable automatic updating.</para>
-        /// <para>The number of update threads determines how many HSTREAM/HMUSIC channel playback buffers can be updated in parallel; 
-        /// each thread can process one channel at a time. The default is to use a single thread, but additional threads can be used to take advantage of multiple CPU cores. 
+        /// <para>The number of update threads determines how many HSTREAM/HMUSIC channel playback buffers can be updated in parallel;
+        /// each thread can process one channel at a time. The default is to use a single thread, but additional threads can be used to take advantage of multiple CPU cores.
         /// There is generally nothing much to be gained by creating more threads than there are CPU cores, but one benefit of using multiple threads even with a single CPU core is that a slow updating channel need not delay the updating of other channels.</para>
         /// <para>When automatic updating is disabled (threads = 0), <see cref="M:Un4seen.Bass.Bass.BASS_Update(System.Int32)" /> or <see cref="M:Un4seen.Bass.Bass.BASS_ChannelUpdate(System.Int32,System.Int32)" /> should be used instead.</para>
         /// <para>The number of update threads can be changed at any time, including during playback.</para>
         /// <para><b>Platform-specific:</b> The number of update threads is limited to 1 on the Android and Windows CE platforms.</para>
         /// </summary>
         BASS_CONFIG_UPDATETHREADS,
+
         /// <summary>
         /// Linux, Android and CE only: The output device buffer length.
         /// <para>length (int): The buffer length in milliseconds.</para>
@@ -1115,6 +734,7 @@ namespace NBass
         /// <para><b>Platform-specific:</b> On Linux, the driver may choose to use a different buffer length if it decides that the specified length is too short or long. The buffer length actually being used can be obtained with <see cref="T:Un4seen.Bass.BASS_INFO" />, like this: latency + minbuf / 2.</para>
         /// </summary>
         BASS_CONFIG_DEV_BUFFER = 27,
+
         /// <summary>
         /// Use improved precision of position reporting on Vista/Win7 ?
         /// <para>precision (bool): Use the DSBCAPS_TRUEPLAYPOSITION option ? (default is <see langword="false" />).</para>
@@ -1124,6 +744,7 @@ namespace NBass
         /// It also applies to the latency measuring (BASS_DEVICE_LATENCY), so you can see its effect there too; it should be set before the <see cref="M:Un4seen.Bass.Bass.BASS_Init(System.Int32,System.Int32,Un4seen.Bass.BASSInit,System.IntPtr)" /> call in that case.</para>
         /// </summary>
         BASS_CONFIG_VISTA_TRUEPOS = 30,
+
         /// <summary>
         /// Supress silencing for corrupted MP3 frames.
         /// <para>errors (bool): Supress error correction silences? (default is <see langword="false" />).</para>
@@ -1132,6 +753,7 @@ namespace NBass
         /// <para>This applies only to the regular BASS version and NOT the "mp3-free" version.</para>
         /// </summary>
         BASS_CONFIG_MP3_ERRORS = 35,
+
         /// <summary>
         /// Windows-only: Include a "Default" entry in the output device list?
         /// <para>default (bool): If <see langword="true" />, a 'Default' device will be included in the device list (default is <see langword="false" />).</para>
@@ -1141,12 +763,14 @@ namespace NBass
         /// <para><b>Platform-specific:</b> This config option is only available on Windows. It is available on all Windows versions (not including CE), but only Windows 7 has the default output switching feature.</para>
         /// </summary>
         BASS_CONFIG_DEV_DEFAULT,
+
         /// <summary>
         /// The time to wait for a server to deliver more data for an internet stream.
         /// <para>timeout (int): The time to wait in milliseconds (default=0, infinite).</para>
         /// <para>When the timeout is hit, the connection with the server will be closed. The default setting is 0, no timeout.</para>
         /// </summary>
         BASS_CONFIG_NET_READTIMEOUT,
+
         /// <summary>
         /// Enable speaker assignment with panning/balance control on Windows Vista and newer?
         /// <para>enable (bool): If <see langword="true" />, speaker assignment with panning/balance control is enabled on Windows Vista and newer.</para>
@@ -1154,12 +778,14 @@ namespace NBass
         /// <para><b>Platform-specific:</b> This config option is only available on Windows. It is available on all Windows versions (not including CE), but only has effect on Windows Vista and newer. Speaker assignment with panning/balance control is always possible on other platforms, where BASS generates the final mix.</para>
         /// </summary>
         BASS_CONFIG_VISTA_SPEAKERS,
+
         /// <summary>
         /// Gets the total number of HSTREAM/HSAMPLE/HMUSIC/HRECORD handles.
         /// <para>none: only used with <see cref="M:Un4seen.Bass.Bass.BASS_GetConfig(Un4seen.Bass.BASSConfig)" />.</para>
         /// <para>The handle count may not only include the app-created stuff but also internal stuff, eg. BASS_WASAPI_Init will create a stream when the BASS_WASAPI_BUFFER flag is used.</para>
         /// </summary>
         BASS_CONFIG_HANDLES = 41,
+
         /// <summary>
         /// Gets or Sets the Unicode character set in device information.
         /// <para>utf8 (bool): If <see langword="true" />, device information will be in UTF-8 form. Otherwise it will be ANSI.</para>
@@ -1168,6 +794,7 @@ namespace NBass
         /// <para><b>Platform-specific:</b> This config option is only available on Windows.</para>
         /// </summary>
         BASS_CONFIG_UNICODE,
+
         /// <summary>
         /// Gets or Sets the default sample rate conversion quality.
         /// <para>quality (int): The sample rate conversion quality... 0 = linear interpolation, 1 = 8 point sinc interpolation, 2 = 16 point sinc interpolation, 3 = 32 point sinc interpolation. Other values are also accepted.</para>
@@ -1176,6 +803,7 @@ namespace NBass
         /// <para>The default setting is 1 (8 point sinc interpolation).</para>
         /// </summary>
         BASS_CONFIG_SRC,
+
         /// <summary>
         /// Gets or Sets the default sample rate conversion quality for samples.
         /// <para>quality (int): The sample rate conversion quality... 0 = linear interpolation, 1 = 8 point sinc interpolation, 2 = 16 point sinc interpolation, 3 = 32 point sinc interpolation. Other values are also accepted.</para>
@@ -1184,39 +812,45 @@ namespace NBass
         /// <para>The default setting is 0 (linear interpolation).</para>
         /// </summary>
         BASS_CONFIG_SRC_SAMPLE,
+
         /// <summary>
-        /// Gets or Sets the buffer length for asynchronous file reading (default is 64KB). 
+        /// Gets or Sets the buffer length for asynchronous file reading (default is 64KB).
         /// <para>length (int): The buffer length in bytes. This will be rounded up to the nearest 4096 byte (4KB) boundary.</para>
         /// <para>This determines the amount of file data that can be read ahead of time with asynchronous file reading. The default setting is 65536 bytes (64KB).</para>
         /// <para>Using this config option only affects channels that are created afterwards, not any that have already been created. So it is possible to have channels with differing buffer lengths by using this config option each time before creating them.</para>
         /// </summary>
         BASS_CONFIG_ASYNCFILE_BUFFER,
+
         /// <summary>
         /// Pre-scan chained OGG files?
         /// <para>prescan (bool): If <see langword="true" />, chained OGG files are pre-scanned.</para>
         /// <para>This option is enabled by default, and is equivalent to including the BASS_STREAM_PRESCAN flag in a <see cref="M:Un4seen.Bass.Bass.BASS_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)" /> call when opening an OGG file. It can be disabled if seeking and an accurate length reading are not required from chained OGG files, for faster stream creation.</para>
         /// </summary>
         BASS_CONFIG_OGG_PRESCAN = 47,
+
         /// <summary>
         /// Play audio from mp4 (video) files?
         /// <para>playmp4 (bool): If <see langword="true" /> (default) BASS will play the audio from mp4 video files (when using the Media Foundation). If <see langword="false" /> mp4 video files will not be played.</para>
         /// </summary>
         BASS_CONFIG_MF_VIDEO,
+
         /// <summary>
         /// BASS_AC3 add-on: dynamic range compression option
         /// <para>dynrng (bool): If <see langword="true" /> dynamic range compression is enbaled (default is <see langword="false" />).</para>
         /// </summary>
         BASS_CONFIG_AC3_DYNRNG = 65537,
+
         /// <summary>
         /// BASSWMA add-on: Prebuffer internet streams on creation, before returning from BASS_WMA_StreamCreateFile?
         /// <para>prebuf (bool): The Windows Media modules must prebuffer a stream before starting decoding/playback of it. This option determines when/where to wait for that to be completed.</para>
-        /// <para>The Windows Media modules must prebuffer a stream before starting decoding/playback of it. 
-        /// This option determines whether the stream creation function (eg. <see cref="M:Un4seen.Bass.AddOn.Wma.BassWma.BASS_WMA_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)" />) will wait for the prebuffering to complete before returning. 
-        /// If playback of a stream is attempted before it has prebuffered, it will stall and then resume once it has finished prebuffering. 
+        /// <para>The Windows Media modules must prebuffer a stream before starting decoding/playback of it.
+        /// This option determines whether the stream creation function (eg. <see cref="M:Un4seen.Bass.AddOn.Wma.BassWma.BASS_WMA_StreamCreateFile(System.String,System.Int64,System.Int64,Un4seen.Bass.BASSFlag)" />) will wait for the prebuffering to complete before returning.
+        /// If playback of a stream is attempted before it has prebuffered, it will stall and then resume once it has finished prebuffering.
         /// The prebuffering progress can be monitored via <see cref="M:Un4seen.Bass.Bass.BASS_StreamGetFilePosition(System.Int32,Un4seen.Bass.BASSStreamFilePosition)" /> (BASS_FILEPOS_WMA_BUFFER).</para>
         /// <para>This option is enabled by default.</para>
         /// </summary>
         BASS_CONFIG_WMA_PREBUF = 65793,
+
         /// <summary>
         /// BASSWMA add-on: use BASS file handling.
         /// <para>bassfile (bool): Default is disabled (<see langword="false" />).</para>
@@ -1225,50 +859,58 @@ namespace NBass
         /// The downside of enabling this feature is, that it stops playback while encoding from working.</para>
         /// </summary>
         BASS_CONFIG_WMA_BASSFILE = 65795,
+
         /// <summary>
         /// BASSWMA add-on: enable network seeking?
         /// <para>seek (bool): If <see langword="true" /> seeking in network files/streams is enabled (default is <see langword="false" />).</para>
         /// <para>If <see langword="true" />, it allows seeking before the entire file has been downloaded/cached. Seeking is slow that way, so it's disabled by default.</para>
         /// </summary>
         BASS_CONFIG_WMA_NETSEEK,
+
         /// <summary>
         /// BASSWMA add-on: play audio from WMV (video) files?
         /// <para>playwmv (bool): If <see langword="true" /> (default) BASSWMA will play the audio from WMV video files. If <see langword="false" /> WMV files will not be played.</para>
         /// </summary>
         BASS_CONFIG_WMA_VIDEO,
+
         /// <summary>
         /// BASSWMA add-on: use a seperate thread to decode the data?
         /// <para>async (bool): If <see langword="true" /> BASSWMA will decode the data in a seperate thread. If <see langword="false" /> (default) the normal file system will be used.</para>
         /// <para>
         /// The WM decoder can by synchronous (decodes data on demand) or asynchronous (decodes in the background).
-        /// With the background decoding, BASSWMA buffers the data that it receives from the decoder for the STREAMPROC to access. 
+        /// With the background decoding, BASSWMA buffers the data that it receives from the decoder for the STREAMPROC to access.
         /// The start of playback/seeking may well be slightly delayed due to there being no data available immediately.
         /// Internet streams are only supported by the asynchronous system, but local files can use either, and BASSWMA uses the synchronous system by default.
         /// </para>
         /// </summary>
         BASS_CONFIG_WMA_ASYNC = 65807,
+
         /// <summary>
         /// BASSCD add-on: Automatically free an existing stream when creating a new one on the same drive?
         /// <para>freeold (bool): Only one stream can exist at a time per CD drive. So if a stream using the same drive already exists, stream creation function calls will fail, unless this config option is enabled to automatically free the existing stream. This is enabled by default.</para>
         /// </summary>
         BASS_CONFIG_CD_FREEOLD = 66048,
+
         /// <summary>
         /// BASSCD add-on: Number of times to retry after a read error.
         /// <para>retries (int): Number of times to retry reading...0 = don't retry. The default is 2 retries.</para>
         /// </summary>
         BASS_CONFIG_CD_RETRY,
+
         /// <summary>
         /// BASSCD add-on: Automatically reduce the read speed when a read error occurs?
         /// <para>autospd (bool): By default, this option is disabled.</para>
         /// <para>If <see langword="true" />, the read speed will be halved when a read error occurs, before retrying (if the BASS_CONFIG_CD_RETRY config setting allows).</para>
         /// </summary>
         BASS_CONFIG_CD_AUTOSPEED,
+
         /// <summary>
         /// BASSCD add-on: Skip past read errors?
         /// <para>skip (bool): If <see langword="true" />, reading will skip onto the next frame when a read error occurs, otherwise reading will stop.</para>
         /// <para>When skipping an error, it will be replaced with silence, so that the track length is unaffected. Before skipping past an error, BASSCD will first retry according to the <see cref="F:Un4seen.Bass.BASSConfig.BASS_CONFIG_CD_RETRY" /> setting.</para>
         /// </summary>
         BASS_CONFIG_CD_SKIPERROR,
+
         /// <summary>
         /// BASSCD add-on: The server to use in CDDB requests.
         /// <para>server (string): The CDDB server address, in the form of "user:pass@server:port/path". The "user:pass@", ":port" and "/path" parts are optional; only the "server" part is required. If not provided, the port and path default to 80 and "/~cddb/cddb.cgi", respectively.</para>
@@ -1276,11 +918,13 @@ namespace NBass
         /// <para>The proxy server, as configured via the BASS_CONFIG_NET_PROXY option, is used when connecting to the CDDB server.</para>
         /// </summary>
         BASS_CONFIG_CD_CDDB_SERVER,
+
         /// <summary>
         /// BASSenc add-on: Encoder DSP priority (default -1000)
         /// <para>priority (int): The priorty determines where in the DSP chain the encoding is performed - all DSP with a higher priority will be present in the encoding. Changes only affect subsequent encodings, not those that have already been started. The default priority is -1000.</para>
         /// </summary>
         BASS_CONFIG_ENCODE_PRIORITY = 66304,
+
         /// <summary>
         /// BASSenc add-on: The maximum queue length (default 10000, 0=no limit)
         /// <para>limit (int): The async encoder queue size limit in milliseconds; 0=unlimited.</para>
@@ -1288,12 +932,14 @@ namespace NBass
         /// The default limit is 10 seconds (10000 milliseconds). Changes only apply to new encoders, not any already existing encoders.</para>
         /// </summary>
         BASS_CONFIG_ENCODE_QUEUE,
+
         /// <summary>
         /// BASSenc add-on: ACM codec name to give priority for the formats it supports.
         /// <para>codec (string pointer): The ACM codec name to give priority (e.g. 'l3codecp.acm').</para>
         /// <para>BASSenc does make a copy of the config string, so it can be freed right after calling it.</para>
         /// </summary>
         BASS_CONFIG_ENCODE_ACM_LOAD,
+
         /// <summary>
         /// BASSenc add-on: The time to wait to send data to a cast server (default 5000ms)
         /// <para>timeout (int): The time to wait, in milliseconds.</para>
@@ -1301,6 +947,7 @@ namespace NBass
         /// <para>The default timeout is 5 seconds (5000 milliseconds). Changes take immediate effect.</para>
         /// </summary>
         BASS_CONFIG_ENCODE_CAST_TIMEOUT = 66320,
+
         /// <summary>
         /// BASSenc add-on: Proxy server settings when connecting to Icecast and Shoutcast (in the form of "[user:pass@]server:port"... <see langword="null" /> = don't use a proxy but a direct connection).
         /// <para>proxy (string pointer): The proxy server settings, in the form of "[user:pass@]server:port"... <see langword="null" /> = don't use a proxy but make a direct connection (default). If only the "server:port" part is specified, then that proxy server is used without any authorization credentials.</para>
@@ -1308,6 +955,7 @@ namespace NBass
         /// <para>Changes take effect from the next internet stream creation call. By default, BASSenc will not use any proxy settings when connecting to Icecast and Shoutcast.</para>
         /// </summary>
         BASS_CONFIG_ENCODE_CAST_PROXY,
+
         /// <summary>
         /// BASSMIDI add-on: Automatically compact all soundfonts following a configuration change?
         /// <para>compact (bool): If <see langword="true" />, all soundfonts are compacted following a MIDI stream being freed, or a <see cref="M:Un4seen.Bass.AddOn.Midi.BassMidi.BASS_MIDI_StreamSetFonts(System.Int32,Un4seen.Bass.AddOn.Midi.BASS_MIDI_FONT[],System.Int32)" /> call.</para>
@@ -1316,6 +964,7 @@ namespace NBass
         /// <para>By default, this option is enabled.</para>
         /// </summary>
         BASS_CONFIG_MIDI_COMPACT = 66560,
+
         /// <summary>
         /// BASSMIDI add-on: The maximum number of samples to play at a time (polyphony).
         /// <para>voices (int): Maximum number of samples to play at a time... 1 (min) - 500 (max).</para>
@@ -1326,6 +975,7 @@ namespace NBass
         /// <para>The default setting is 100, except on iOS, where it is 40.</para>
         /// </summary>
         BASS_CONFIG_MIDI_VOICES,
+
         /// <summary>
         /// BASSMIDI add-on: Automatically load matching soundfonts?
         /// <para>autofont (bool): If <see langword="true" />, BASSMIDI will try to load a soundfont matching the MIDI file.</para>
@@ -1333,6 +983,7 @@ namespace NBass
         /// <para>By default, this option is enabled.</para>
         /// </summary>
         BASS_CONFIG_MIDI_AUTOFONT,
+
         /// <summary>
         /// BASSMIDI add-on: Default soundfont usage
         /// <para>filename (string): Filename of the default soundfont to use (<see langword="null" /> = no default soundfont).</para>
@@ -1340,24 +991,27 @@ namespace NBass
         /// <para>On Windows, the default is to use one of the Creative soundfonts (28MBGM.SF2 or CT8MGM.SF2 or CT4MGM.SF2 or CT2MGM.SF2), if present in the windows system directory.</para>
         /// </summary>
         BASS_CONFIG_MIDI_DEFFONT,
+
         /// <summary>
         /// BASSmix add-on: The order of filter used to reduce aliasing (only available/used pre BASSmix 2.4.7, where BASS_CONFIG_SRC is used).
         /// <para>order (int): The filter order... 2 (min) to 50 (max), and even. If the value specified is outside this range, it is automatically capped.</para>
-        /// <para>The filter order determines how abruptly the level drops at the cutoff frequency, or the roll-off. The levels rolls off at 6 dB per octave for each order. For example, a 4th order filter will roll-off at 24 dB per octave. A low order filter may result in some aliasing persisting, and sounds close to the cutoff frequency being attenuated. 
+        /// <para>The filter order determines how abruptly the level drops at the cutoff frequency, or the roll-off. The levels rolls off at 6 dB per octave for each order. For example, a 4th order filter will roll-off at 24 dB per octave. A low order filter may result in some aliasing persisting, and sounds close to the cutoff frequency being attenuated.
         /// Higher orders reduce those things, but require more processing.</para>
         /// <para>By default, a 4th order filter is used. Changes only affect channels that are subsequently plugged into a mixer, not those that are already plugged in.</para>
         /// </summary>
         BASS_CONFIG_MIXER_FILTER = 67072,
+
         /// <summary>
         /// BASSmix add-on: The source channel buffer size multiplier.
         /// <para>multiple (int): The buffer size multiplier... 1 (min) to 5 (max). If the value specified is outside this range, it is automatically capped.</para>
-        /// <para>When a source channel has buffering enabled, the mixer will buffer the decoded data, so that it is available to the <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelGetData(System.Int32,System.IntPtr,System.Int32)" /> and <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelGetLevel(System.Int32)" /> functions. 
-        /// To reach the source channel's buffer size, the multiplier (multiple) is applied to the BASS_CONFIG_BUFFER setting at the time of the mixer's creation. If the source is played at it's default rate, then the buffer only need to be as big as the mixer's buffer. 
+        /// <para>When a source channel has buffering enabled, the mixer will buffer the decoded data, so that it is available to the <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelGetData(System.Int32,System.IntPtr,System.Int32)" /> and <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelGetLevel(System.Int32)" /> functions.
+        /// To reach the source channel's buffer size, the multiplier (multiple) is applied to the BASS_CONFIG_BUFFER setting at the time of the mixer's creation. If the source is played at it's default rate, then the buffer only need to be as big as the mixer's buffer.
         /// But if it's played at a faster rate, then the buffer needs to be bigger for it to contain the data that is currently being heard from the mixer. For example, playing a channel at 2x its normal speed would require the buffer to be 2x the normal size (multiple = 2).</para>
         /// <para>Larger buffers obviously require more memory, so the multiplier should not be set higher than necessary.</para>
         /// <para>The default multiplier is 2x. Changes only affect subsequently setup channel buffers. An existing channel can have its buffer reinitilized by disabling and then re-enabling the BASS_MIXER_BUFFER flag using <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelFlags(System.Int32,Un4seen.Bass.BASSFlag,Un4seen.Bass.BASSFlag)" />.</para>
         /// </summary>
         BASS_CONFIG_MIXER_BUFFER,
+
         /// <summary>
         /// BASSmix add-on: How far back to keep record of source positions to make available for <see cref="M:Un4seen.Bass.AddOn.Mix.BassMix.BASS_Mixer_ChannelGetPositionEx(System.Int32,Un4seen.Bass.BASSMode,System.Int32)" />.
         /// <para>length (int): The length of time to back, in milliseconds.</para>
@@ -1365,6 +1019,7 @@ namespace NBass
         /// <para>The default setting is 2000ms. Changes only affect newly created mixers, not any that already exist.</para>
         /// </summary>
         BASS_CONFIG_MIXER_POSEX,
+
         /// <summary>
         /// BASSmix add-on: The splitter buffer length.
         /// <para>length (int): The buffer length in milliseconds... 100 (min) to 5000 (max). If the value specified is outside this range, it is automatically capped.</para>
@@ -1373,16 +1028,19 @@ namespace NBass
         /// <para>Changes do not affect buffers that have already been allocated; any sources that have already had splitter streams created will continue to use their existing buffers.</para>
         /// </summary>
         BASS_CONFIG_SPLIT_BUFFER = 67088,
+
         /// <summary>
         /// BASSaac add-on: play audio from mp4 (video) files?
         /// <para>playmp4 (bool): If <see langword="true" /> (default) BASSaac will play the audio from mp4 video files. If <see langword="false" /> mp4 video files will not be played.</para>
         /// </summary>
         BASS_CONFIG_MP4_VIDEO = 67328,
+
         /// <summary>
         /// BASSaac add-on: Support MP4 in BASS_AAC_StreamCreateXXX functions?
         /// <para>usemp4 (bool): If <see langword="true" /> BASSaac supports MP4 in the BASS_AAC_StreamCreateXXX functions. If <see langword="false" /> (default) only AAC is supported.</para>
         /// </summary>
         BASS_CONFIG_AAC_MP4,
+
         /// <summary>
         /// BASSWinamp add-on: Winamp input timeout.
         /// <para>timeout (int): The time (in milliseconds) to wait until timing out, because the plugin is not using the output system.</para>

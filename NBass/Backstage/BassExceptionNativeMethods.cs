@@ -2,9 +2,12 @@
 
 namespace NBass.Backstage
 {
-    public class BassExceptionNativeMethods
+    internal class BassExceptionNativeMethods
     {
-        // Get the BASS_ERROR_xxx error code. Use this function to get the reason for an error.
+        /// <summary>
+        /// Get the BASS_ERROR_xxx error code. Use this function to get the reason for an error.
+        /// </summary>
+        /// <returns></returns>
         [DllImport("bass.dll", EntryPoint = "BASS_ErrorGetCode")]
         public static extern int GetErrorCode();
     }

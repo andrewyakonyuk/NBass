@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NBass.Backstage
 {
-    public static class BassContextNativeMethods
+    internal static class BassContextNativeMethods
     {
         [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_Free")]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -41,7 +41,7 @@ namespace NBass.Backstage
         [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_GetConfig")]
         public static extern int GetConfig(int option);
 
-        [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint="BASS_SetConfig")]
+        [DllImport("bass.dll", CharSet = CharSet.Auto, EntryPoint = "BASS_SetConfig")]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool SetConfig(int option, int value);
     }

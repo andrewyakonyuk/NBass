@@ -144,11 +144,6 @@ namespace NBass
             return output;
         }
 
-        public string[] GetTag(Tag tag)
-        {
-            return GetTagGen(tag);
-        }
-
         public void LinkTo(IChannel channel)
         {
             CheckDisposed();
@@ -245,14 +240,27 @@ namespace NBass
                 if (!ChannelNativeMethods.Get3DAttributes(Handle, ref mode, ref min, ref max,
                     ref iangle, ref oangle, ref outvol))
                     throw new BassException();
-                return new Channel3DAttributes(mode, min, max, iangle, oangle, outvol);
+                return new Channel3DAttributes
+                {
+                    Mode = (ThreeDMode)mode,
+                    MinimumDistance = min,
+                    MaximumDistance = max,
+                    InsideAngle = iangle,
+                    OutsideAngle = oangle,
+                    OutsideDeltaVolume = outvol
+                };
             }
             set
             {
                 CheckDisposed();
 
-                if (!ChannelNativeMethods.Set3DAttributes(Handle, value.mode, value.min, value.max,
-                    value.iangle, value.oangle, value.outvol))
+                if (!ChannelNativeMethods.Set3DAttributes(Handle,
+                    (int)value.Mode,
+                    value.MinimumDistance,
+                    value.MaximumDistance,
+                    value.InsideAngle,
+                    value.OutsideAngle,
+                    value.OutsideDeltaVolume))
                     throw new BassException();
             }
         }
@@ -427,28 +435,6 @@ namespace NBass
         }
 
         #endregion Properties
-
-        protected string[] GetTagGen(Tag tag)
-        {
-            var tags = new ArrayList();
-            IntPtr ptr = ChannelNativeMethods.GetTags(Handle, (int)tag);
-            if (ptr == IntPtr.Zero)
-                throw new BassException();
-            do
-            {
-                string tagName = Marshal.PtrToStringAnsi(ptr);
-                if (tagName == string.Empty)
-                    break;
-                tags.Add(tagName);
-                ptr = new IntPtr(ptr.ToInt32() + (tagName.Length + 1));
-            }
-            while (true);
-
-            var output = new string[tags.Count];
-            for (int i = 0; i < output.Length; i++)
-                output[i] = (string)tags[i];
-            return output;
-        }
 
         protected virtual void StartTimer()
         {

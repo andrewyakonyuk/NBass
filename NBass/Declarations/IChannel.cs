@@ -47,8 +47,6 @@ namespace NBass.Declarations
 
         int GetData(short[] buffer, int length);
 
-        string[] GetTag(Tag tag);
-
         void Pause();
 
         void Play();

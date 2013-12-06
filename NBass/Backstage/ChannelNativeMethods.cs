@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace NBass.Backstage
 {
-    public static class ChannelNativeMethods
+    internal static class ChannelNativeMethods
     {
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelBytes2Seconds", CharSet = CharSet.Auto)]
         public static extern double BytesToSeconds(IntPtr handle, long pos);
@@ -26,12 +26,14 @@ namespace NBass.Backstage
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelGetData", CharSet = CharSet.Auto)]
         public static extern int GetData(IntPtr handle, [Out] byte[] buffer, int Length);
 
-        // Retrieves upto "length" bytes of the channel//s current sample data. This is
-        // useful if you wish to "visualize" the sound.
-        // handle:  Channel handle(HMUSIC / HSTREAM, or RECORDCHAN)
-        // buffer : Location to write the data
-        // length : Number of bytes wanted, or a BASS_DATA_xxx flag
-        // RETURN : Number of bytes actually written to the buffer (-1=error)
+        /// <summary>
+        /// Retrieves upto "length" bytes of the channel//s current sample data. This is
+        /// useful if you wish to "visualize" the sound.
+        /// </summary>
+        /// <param name="handle">Channel handle(HMUSIC / HSTREAM, or RECORDCHAN)</param>
+        /// <param name="buffer"> Location to write the data</param>
+        /// <param name="Length">Number of bytes wanted, or a BASS_DATA_xxx flag</param>
+        /// <returns>Number of bytes actually written to the buffer (-1=error)</returns>
         [DllImport("bass.dll", EntryPoint = "BASS_ChannelGetData", CharSet = CharSet.Auto)]
         public static extern int GetData(IntPtr handle, float[] buffer, int Length);
 
