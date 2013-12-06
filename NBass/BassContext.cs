@@ -21,6 +21,7 @@ namespace NBass
     {
         private bool _isDisposed = false;
         private ObservableCollection<IPlugin> _plugins;
+        Dictionary<EAXEnvironment, EnvironmentItem> _environmentsPreset;
 
         public BassContext()
         {
@@ -28,11 +29,149 @@ namespace NBass
             var rate = 44100;
             var win = IntPtr.Zero;
             Init(defaultDevice, rate, DeviceSetupFlags.Default, win, IntPtr.Zero);
+            InitEnvironment();
         }
 
-        public BassContext(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win)
+        private void InitEnvironment()
         {
-            Init(device, frequence, flags, win, IntPtr.Zero);
+            _environmentsPreset = new Dictionary<EAXEnvironment, EnvironmentItem>
+                {
+                    {EAXEnvironment.Generic, new EnvironmentItem{
+                        Volume = 0.5f,
+                        Decay = 1.493f,
+                        Damp = 0.5f
+                    }},
+                    {EAXEnvironment.PaddedCell, new EnvironmentItem{
+                        Volume = 0.25f,
+                        Decay = 0.1f,
+                        Damp = 0f
+                    }},
+                    {EAXEnvironment.Room, new EnvironmentItem{
+                        Volume = 0.417f,
+                        Decay = 0.4f,
+                        Damp = 0.666f
+                    }},
+                    {EAXEnvironment.Bathroom, new EnvironmentItem{
+                        Volume = 0.653f,
+                        Decay = 1.499f,
+                        Damp = 0.166f
+                    }},
+                    {EAXEnvironment.LivingRoom, new EnvironmentItem{
+                        Volume = 0.208f,
+                        Decay = 0.478f,
+                        Damp = 0f
+                    }},
+                    {EAXEnvironment.StoneRoom, new EnvironmentItem{
+                        Volume = 0.5f,
+                        Decay = 2.309f,
+                        Damp = 0.888f
+                    }},
+                    {EAXEnvironment.Auditorium, new EnvironmentItem{
+                        Volume = 0.403f,
+                        Decay = 4.279f,
+                        Damp = 0.5f
+                    }},
+                    {EAXEnvironment.ConcertHall, new EnvironmentItem{
+                        Volume = 0.5f,
+                        Decay = 3.961f,
+                        Damp = 0.5f
+                    }},
+                    {EAXEnvironment.Cave, new EnvironmentItem{
+                        Volume = 0.5f,
+                        Decay = 2.886f,
+                        Damp = 1.304f
+                    }},
+                    {EAXEnvironment.Arena, new EnvironmentItem{
+                        Volume = 0.361f,
+                        Decay = 7.284f,
+                        Damp = 0.332f
+                    }},
+                    {EAXEnvironment.Hangar, new EnvironmentItem{
+                        Volume = 0.5f,
+                        Decay = 10f,
+                        Damp = 0.3f
+                    }},
+                    {EAXEnvironment.CarpetedHallway, new EnvironmentItem{
+                        Volume = 0.153f,
+                        Decay = 0.259f,
+                        Damp = 2f
+                    }},
+                    {EAXEnvironment.Hallway, new EnvironmentItem{
+                        Volume = 0.361f,
+                        Decay = 1.493f,
+                        Damp = 0f
+                    }},
+                    {EAXEnvironment.StoneCorridor, new EnvironmentItem{
+                        Volume = 0.444f,
+                        Decay = 2.697f,
+                        Damp = 0.638f
+                    }},
+                    {EAXEnvironment.Alley, new EnvironmentItem{
+                        Volume = 0.25f,
+                        Decay = 1.752f,
+                        Damp = 0.776f
+                    }},
+                    {EAXEnvironment.Forest, new EnvironmentItem{
+                        Volume = 0.111f,
+                        Decay = 3.145f,
+                        Damp = 0.472f
+                    }},
+                    {EAXEnvironment.City, new EnvironmentItem{
+                        Volume = 0.11f,
+                        Decay = 2.767f,
+                        Damp = 0.224f
+                    }},
+                    {EAXEnvironment.Mountains, new EnvironmentItem{
+                        Volume = 0.194f,
+                        Decay = 7.841f,
+                        Damp = 0.472f
+                    }},
+                    {EAXEnvironment.Quarry, new EnvironmentItem{
+                        Volume = 1f,
+                        Decay = 1.499f,
+                        Damp = 0.5f
+                    }},
+                    {EAXEnvironment.Plain, new EnvironmentItem{
+                        Volume = 0.097f,
+                        Decay = 2.767f,
+                        Damp = 0.224f
+                    }},
+                    {EAXEnvironment.ParkingLot, new EnvironmentItem{
+                        Volume = 0.208f,
+                        Decay = 1.652f,
+                        Damp = 1.5f
+                    }},
+                    {EAXEnvironment.SewerPipe, new EnvironmentItem{
+                        Volume = 0.652f,
+                        Decay = 2.886f,
+                        Damp = 0.25f
+                    }},
+                    {EAXEnvironment.Underwater, new EnvironmentItem{
+                        Volume = 1f,
+                        Decay = 1.449f,
+                        Damp = 0f
+                    }},
+                    {EAXEnvironment.Drugged, new EnvironmentItem{
+                        Volume = 0.875f,
+                        Decay = 8.392f,
+                        Damp = 1.388f
+                    }},
+                    {EAXEnvironment.Dizzy, new EnvironmentItem{
+                        Volume = 0.139f,
+                        Decay = 17.234f,
+                        Damp = 0.666f
+                    }},
+                    {EAXEnvironment.Psychotic, new EnvironmentItem{
+                        Volume = 0.486f,
+                        Decay = 7.563f,
+                        Damp = 0.806f
+                    }}
+                };
+        }
+
+        public BassContext(IntPtr device, int frequency, DeviceSetupFlags flags, IntPtr win)
+        {
+            Init(device, frequency, flags, win, IntPtr.Zero);
         }
 
         ~BassContext()
@@ -42,128 +181,43 @@ namespace NBass
 
         public bool IsDisposed { get { return _isDisposed; } }
 
-        public EAXEnvironment EAXEnvironment
+        public EAXEnvironment EnvironmentPreset
         {
             get
             {
-                EAXEnvironment environment = EAXEnvironment.Generic;
-                var volume = 0f;
-                var decay = 0f;
-                var damp = 0f;
-                BassException.ThrowIfTrue(() => !_BassContext.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
-                return environment;
+                return GetEnvironment().Type;
             }
             set
             {
-                bool result = false;
-                switch (value)
+                if (_environmentsPreset.ContainsKey(value))
                 {
-                    case EAXEnvironment.Generic:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Generic, 0.5f, 1.493f, 0.5f);
-                        break;
-
-                    case EAXEnvironment.PaddedCell:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.PaddedCell, 0.25f, 0.1f, 0f);
-                        break;
-
-                    case EAXEnvironment.Room:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Room, 0.417f, 0.4f, 0.666f);
-                        break;
-
-                    case EAXEnvironment.Bathroom:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Bathroom, 0.653f, 1.499f, 0.166f);
-                        break;
-
-                    case EAXEnvironment.LivingRoom:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.LivingRoom, 0.208f, 0.478f, 0f);
-                        break;
-
-                    case EAXEnvironment.StoneRoom:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.StoneRoom, 0.5f, 2.309f, 0.888f);
-                        break;
-
-                    case EAXEnvironment.Auditorium:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Auditorium, 0.403f, 4.279f, 0.5f);
-                        break;
-
-                    case EAXEnvironment.ConcertHall:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.ConcertHall, 0.5f, 3.961f, 0.5f);
-                        break;
-
-                    case EAXEnvironment.Cave:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Cave, 0.5f, 2.886f, 1.304f);
-                        break;
-
-                    case EAXEnvironment.Arena:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Arena, 0.361f, 7.284f, 0.332f);
-                        break;
-
-                    case EAXEnvironment.Hangar:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Hangar, 0.5f, 10f, 0.3f);
-                        break;
-
-                    case EAXEnvironment.CarpetedHallway:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.CarpetedHallway, 0.153f, 0.259f, 2f);
-                        break;
-
-                    case EAXEnvironment.Hallway:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Hallway, 0.361f, 1.493f, 0f);
-                        break;
-
-                    case EAXEnvironment.StoneCorridor:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.StoneCorridor, 0.444f, 2.697f, 0.638f);
-                        break;
-
-                    case EAXEnvironment.Alley:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Alley, 0.25f, 1.752f, 0.776f);
-                        break;
-
-                    case EAXEnvironment.Forest:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Forest, 0.111f, 3.145f, 0.472f);
-                        break;
-
-                    case EAXEnvironment.City:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.City, 0.111f, 2.767f, 0.224f);
-                        break;
-
-                    case EAXEnvironment.Mountains:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Mountains, 0.194f, 7.841f, 0.472f);
-                        break;
-
-                    case EAXEnvironment.Quarry:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Quarry, 1f, 1.499f, 0.5f);
-                        break;
-
-                    case EAXEnvironment.Plain:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Plain, 0.097f, 2.767f, 0.224f);
-                        break;
-
-                    case EAXEnvironment.ParkingLot:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.ParkingLot, 0.208f, 1.652f, 1.5f);
-                        break;
-
-                    case EAXEnvironment.SewerPipe:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.SewerPipe, 0.652f, 2.886f, 0.25f);
-                        break;
-
-                    case EAXEnvironment.Underwater:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Underwater, 1f, 1.499f, 0f);
-                        break;
-
-                    case EAXEnvironment.Drugged:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Drugged, 0.875f, 8.392f, 1.388f);
-                        break;
-
-                    case EAXEnvironment.Dizzy:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Dizzy, 0.139f, 17.234f, 0.666f);
-                        break;
-
-                    case EAXEnvironment.Psychotic:
-                        result = _BassContext.SetEAXParameters(EAXEnvironment.Psychotic, 0.486f, 7.563f, 0.806f);
-                        break;
+                    var preset = _environmentsPreset[value];
+                    preset.Type = value;
+                    SetEnvironment(preset);
                 }
-                BassException.ThrowIfTrue(() => result);
+                else new ArgumentOutOfRangeException("value", value, "Non present environment pre-set");
             }
+        }
+
+        public void SetEnvironment(EnvironmentItem item)
+        {
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.SetEAXParameters(item.Type, item.Volume, item.Decay, item.Damp));
+        }
+
+        public EnvironmentItem GetEnvironment()
+        {
+            EAXEnvironment environment = EAXEnvironment.Generic;
+            var volume = 0f;
+            var decay = 0f;
+            var damp = 0f;
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
+            return new EnvironmentItem
+            {
+                Type = environment,
+                Volume = volume,
+                Decay = decay,
+                Damp = damp
+            };
         }
 
         public ICollection<IPlugin> Plugins
@@ -193,7 +247,7 @@ namespace NBass
         public IStream Load(string filePath, long position, long length, StreamFlags flags)
         {
             flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(_BassContext.LoadStream(false, filePath, position, length, (int)flags));
+            var handle = new IntPtr(BassContextNativeMethods.LoadStream(false, filePath, position, length, (int)flags));
             BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
             return new Stream(handle)
             {
@@ -214,7 +268,7 @@ namespace NBass
         public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
         {
             flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(_BassContext.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
+            var handle = new IntPtr(BassContextNativeMethods.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
             BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
             return new Stream(handle)
             {
@@ -224,12 +278,12 @@ namespace NBass
 
         public void Start()
         {
-            BassException.ThrowIfTrue(() => !_BassContext.Start());
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Start());
         }
 
         public void Stop()
         {
-            BassException.ThrowIfTrue(() => !_BassContext.Stop());
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Stop());
         }
         protected virtual void Dispose(bool disposing)
         {
@@ -240,12 +294,12 @@ namespace NBass
             }
 
             //free unmanaged resource
-            BassException.ThrowIfTrue(() => !_BassContext.Free());
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Free());
         }
 
         protected void Init(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win, IntPtr clsid)
         {
-            BassException.ThrowIfTrue(() => !_BassContext.Init(device, frequence, (int)flags, win, clsid));
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Init(device, frequence, (int)flags, win, clsid));
 
             _plugins = new ObservableCollection<IPlugin>();
             _plugins.CollectionChanged += _plugins_CollectionChanged;
@@ -286,8 +340,8 @@ namespace NBass
         /// </summary>
         public int Buffer
         {
-            get { return _BassContext.GetConfig((int)Configuration.Buffer); }
-            set { _BassContext.SetConfig((int)Configuration.Buffer, value); }
+            get { return BassContextNativeMethods.GetConfig((int)Configuration.Buffer); }
+            set { BassContextNativeMethods.SetConfig((int)Configuration.Buffer, value); }
         }
 
         /// <summary>
@@ -298,8 +352,8 @@ namespace NBass
         /// </summary>
         public int GlobalMusicVolume
         {
-            get { return _BassContext.GetConfig((int)Configuration.GlobalMusicVolume); }
-            set { _BassContext.SetConfig((int)Configuration.GlobalMusicVolume, value); }
+            get { return BassContextNativeMethods.GetConfig((int)Configuration.GlobalMusicVolume); }
+            set { BassContextNativeMethods.SetConfig((int)Configuration.GlobalMusicVolume, value); }
         }
 
         /// <summary>
@@ -310,8 +364,8 @@ namespace NBass
         /// </summary>
         public int GlobalSampleVolume
         {
-            get { return _BassContext.GetConfig((int)Configuration.GlobalSampleVolume); }
-            set { _BassContext.SetConfig((int)Configuration.GlobalSampleVolume, value); }
+            get { return BassContextNativeMethods.GetConfig((int)Configuration.GlobalSampleVolume); }
+            set { BassContextNativeMethods.SetConfig((int)Configuration.GlobalSampleVolume, value); }
         }
 
         /// <summary>
@@ -322,8 +376,8 @@ namespace NBass
         /// </summary>
         public int GlobalStreamVolume
         {
-            get { return _BassContext.GetConfig((int)Configuration.GlobalStreamVolume); }
-            set { _BassContext.SetConfig((int)Configuration.GlobalStreamVolume, value); }
+            get { return BassContextNativeMethods.GetConfig((int)Configuration.GlobalStreamVolume); }
+            set { BassContextNativeMethods.SetConfig((int)Configuration.GlobalStreamVolume, value); }
         }
 
         /// <summary>
@@ -336,10 +390,12 @@ namespace NBass
         /// </summary>
         public int UpdatePeriod
         {
-            get { return _BassContext.GetConfig((int)Configuration.UpdatePeriod); }
-            set { _BassContext.SetConfig((int)Configuration.UpdatePeriod, value); }
+            get { return BassContextNativeMethods.GetConfig((int)Configuration.UpdatePeriod); }
+            set { BassContextNativeMethods.SetConfig((int)Configuration.UpdatePeriod, value); }
         }
 
         #endregion Configuration
+
+        
     }
 }
