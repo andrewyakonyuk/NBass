@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -89,7 +88,7 @@ namespace NBass
         /// </summary>
         /// <param name="pos">The position to translate</param>
         /// <returns>The millisecond position</returns>
-        public double BytesToSeconds(long pos)
+        protected double BytesToSeconds(long pos)
         {
             CheckDisposed();
 
@@ -163,7 +162,7 @@ namespace NBass
         {
             CheckDisposed();
             if (!ChannelNativeMethods.Play(_handle, false)) throw new BassException();
-            StartTimer();
+            _progresstimer.Start();
         }
 
         /// <summary>
@@ -171,7 +170,7 @@ namespace NBass
         /// </summary>
         /// <param name="pos">The position to translate</param>
         /// <returns>The byte position</returns>
-        public long SecondsToBytes(double pos)
+        protected long SecondsToBytes(double pos)
         {
             CheckDisposed();
             long result = ChannelNativeMethods.SecondsToBytes(_handle, pos);
@@ -204,6 +203,7 @@ namespace NBass
         protected virtual void Dispose(bool disposing)
         {
             _isDisposed |= !_isDisposed;
+            _progresstimer.Dispose();
         }
 
         #region Properties
@@ -436,13 +436,6 @@ namespace NBass
 
         #endregion Properties
 
-        protected virtual void StartTimer()
-        {
-            CheckDisposed();
-
-            _progresstimer.Start();
-        }
-
         private void _effects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             //if (e.NewItems != null)
@@ -556,7 +549,7 @@ namespace NBass
             if (_channelEnd != null) _channelEnd(this, null);
         }
 
-        private void OnGetSyncCallBack(IntPtr handle, IntPtr channel, int data, int user)
+        void OnGetSyncCallBack(IntPtr handle, IntPtr channel, int data, int user)
         {
             OnEnd();
         }
