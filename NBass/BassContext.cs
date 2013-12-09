@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using NBass.Backstage;
 using NBass.Declarations;
@@ -20,7 +21,6 @@ namespace NBass
     //TODO add comments for high-level member
     //TODO add music native methods
     //TODO add music info property
-    //TODO add record native methods
     //TODO add sample native methods
     //TODO update interfaces
 
@@ -31,15 +31,168 @@ namespace NBass
         Dictionary<EAXEnvironment, EnvironmentInfo> _environmentsPreset;
 
         public BassContext()
+            : this(new IntPtr(-1), 44100, DeviceSetupFlags.Default, IntPtr.Zero)
         {
-            var defaultDevice = new IntPtr(-1);
-            var rate = 44100;
-            var win = IntPtr.Zero;
-            Init(defaultDevice, rate, DeviceSetupFlags.Default, win, IntPtr.Zero);
-            InitEnvironment();
         }
 
-        private void InitEnvironment()
+        public BassContext(IntPtr device, int frequency, DeviceSetupFlags flags, IntPtr win)
+        {
+            if (frequency < 0)
+                throw new ArgumentException("Frequency can't be less than zero", "frequency");
+
+            InitDevice(device, frequency, flags, win, IntPtr.Zero);
+
+            InitEnvironment();
+            _plugins = new ObservableCollection<IPlugin>();
+            _plugins.CollectionChanged += _plugins_CollectionChanged;
+        }
+
+        ~BassContext()
+        {
+            Dispose(false);
+        }
+
+        public bool IsDisposed { get { return _isDisposed; } }
+
+        public EAXEnvironment EnvironmentPreset
+        {
+            get
+            {
+                return GetEnvironment().Type;
+            }
+            set
+            {
+                if (_environmentsPreset.ContainsKey(value))
+                {
+                    var preset = _environmentsPreset[value];
+                    preset.Type = value;
+                    SetEnvironment(preset);
+                }
+                else new ArgumentOutOfRangeException("value", value, "Non present environment pre-set");
+            }
+        }
+
+        public void SetEnvironment(EnvironmentInfo item)
+        {
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.SetEAXParameters(item.Type, item.Volume, item.Decay, item.Damp));
+        }
+
+        public EnvironmentInfo GetEnvironment()
+        {
+            EAXEnvironment environment = EAXEnvironment.Generic;
+            var volume = 0f;
+            var decay = 0f;
+            var damp = 0f;
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
+            return new EnvironmentInfo
+            {
+                Type = environment,
+                Volume = volume,
+                Decay = decay,
+                Damp = damp
+            };
+        }
+
+        public ICollection<IPlugin> Plugins
+        {
+            get {
+                throw new NotImplementedException();
+                return _plugins;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public IStream Load(string filePath)
+        {
+            return Load(filePath, StreamFlags.Default);
+        }
+
+        public IStream Load(string filePath, StreamFlags flags)
+        {
+            return Load(filePath, 0, 0, flags);
+        }
+
+        public IStream Load(string filePath, long position, long length, StreamFlags flags)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                throw new ArgumentNullException("filePath");
+
+            if (!IsValidFilePath(filePath))
+                throw new ArgumentException("Filepath is not valid","filePath");
+
+            if (position < 0)
+                throw new ArgumentException("Position can't be less than zero", "position");
+
+            if (length < 0)
+                throw new ArgumentException("Length can't be less than zero", "length");
+
+            flags |= StreamFlags.Unicode;
+            var handle = new IntPtr(BassContextNativeMethods.LoadStream(false, filePath, (long)position, (long)length, (int)flags));
+            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
+            return new Stream(handle)
+            {
+                Owner = this
+            };
+        }
+
+        public IStream Load(Uri uri)
+        {
+            return Load(uri, StreamFlags.Default, null);
+        }
+
+        public IStream Load(Uri uri, StreamFlags flags)
+        {
+            return Load(uri, flags, null);
+        }
+
+        public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
+        {
+            flags |= StreamFlags.Unicode;
+            var handle = new IntPtr(BassContextNativeMethods.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
+            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
+            return new Stream(handle)
+            {
+                Owner = this
+            };
+        }
+
+        public void Start()
+        {
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Start());
+        }
+
+        public void Stop()
+        {
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Stop());
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            _isDisposed |= !_isDisposed;
+            if (disposing)
+            {
+                //free manage resource
+            }
+
+            //free unmanaged resource
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Free());
+        }
+
+        protected virtual void InitDevice(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win, IntPtr clsid)
+        {
+            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Init(device, frequence, (int)flags, win, clsid));
+        }
+
+        protected void InitDevice(IntPtr device, int frequence, DeviceSetupFlags flags)
+        {
+            InitDevice(device, frequence, flags, IntPtr.Zero, IntPtr.Zero);
+        }
+
+        protected virtual void InitEnvironment()
         {
             _environmentsPreset = new Dictionary<EAXEnvironment, EnvironmentInfo>
                 {
@@ -176,147 +329,6 @@ namespace NBass
                 };
         }
 
-        public BassContext(IntPtr device, int frequency, DeviceSetupFlags flags, IntPtr win)
-        {
-            Init(device, frequency, flags, win, IntPtr.Zero);
-        }
-
-        ~BassContext()
-        {
-            Dispose(false);
-        }
-
-        public bool IsDisposed { get { return _isDisposed; } }
-
-        public EAXEnvironment EnvironmentPreset
-        {
-            get
-            {
-                return GetEnvironment().Type;
-            }
-            set
-            {
-                if (_environmentsPreset.ContainsKey(value))
-                {
-                    var preset = _environmentsPreset[value];
-                    preset.Type = value;
-                    SetEnvironment(preset);
-                }
-                else new ArgumentOutOfRangeException("value", value, "Non present environment pre-set");
-            }
-        }
-
-        public void SetEnvironment(EnvironmentInfo item)
-        {
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.SetEAXParameters(item.Type, item.Volume, item.Decay, item.Damp));
-        }
-
-        public EnvironmentInfo GetEnvironment()
-        {
-            EAXEnvironment environment = EAXEnvironment.Generic;
-            var volume = 0f;
-            var decay = 0f;
-            var damp = 0f;
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.GetEAXParameters(ref environment, ref volume, ref decay, ref damp));
-            return new EnvironmentInfo
-            {
-                Type = environment,
-                Volume = volume,
-                Decay = decay,
-                Damp = damp
-            };
-        }
-
-        public ICollection<IPlugin> Plugins
-        {
-            get {
-                throw new NotImplementedException();
-                return _plugins;
-            }
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public IStream Load(string filePath)
-        {
-            return Load(filePath, StreamFlags.Default);
-        }
-
-        public IStream Load(string filePath, StreamFlags flags)
-        {
-            return Load(filePath, 0, 0, flags);
-        }
-
-        public IStream Load(string filePath, long position, long length, StreamFlags flags)
-        {
-            flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(BassContextNativeMethods.LoadStream(false, filePath, position, length, (int)flags));
-            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
-            return new Stream(handle)
-            {
-                Owner = this
-            };
-        }
-
-        public IStream Load(Uri uri)
-        {
-            return Load(uri, StreamFlags.Default, null);
-        }
-
-        public IStream Load(Uri uri, StreamFlags flags)
-        {
-            return Load(uri, flags, null);
-        }
-
-        public IStream Load(Uri uri, StreamFlags flags, StreamCallback callback)
-        {
-            flags |= StreamFlags.Unicode;
-            var handle = new IntPtr(BassContextNativeMethods.LoadStreamFromUrl(uri.AbsoluteUri, 0, (int)flags, callback, IntPtr.Zero));
-            BassException.ThrowIfTrue(() => handle == IntPtr.Zero);
-            return new Stream(handle)
-            {
-                Owner = this
-            };
-        }
-
-        public void Start()
-        {
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Start());
-        }
-
-        public void Stop()
-        {
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Stop());
-        }
-        protected virtual void Dispose(bool disposing)
-        {
-            _isDisposed |= !_isDisposed;
-            if (disposing)
-            {
-                //free manage resource
-            }
-
-            //free unmanaged resource
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Free());
-        }
-
-        protected void Init(IntPtr device, int frequence, DeviceSetupFlags flags, IntPtr win, IntPtr clsid)
-        {
-            BassException.ThrowIfTrue(() => !BassContextNativeMethods.Init(device, frequence, (int)flags, win, clsid));
-
-            _plugins = new ObservableCollection<IPlugin>();
-            _plugins.CollectionChanged += _plugins_CollectionChanged;
-        }
-
-        protected void Init(IntPtr device, int frequence, DeviceSetupFlags flags)
-        {
-            Init(device, frequence, flags, IntPtr.Zero, IntPtr.Zero);
-        }
-
         private void _plugins_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null)
@@ -403,6 +415,9 @@ namespace NBass
 
         #endregion Configuration
 
-        
+        bool IsValidFilePath(string filePath)
+        {
+            return !string.IsNullOrEmpty(filePath) && File.Exists(filePath);
+        }
     }
 }

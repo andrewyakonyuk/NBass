@@ -86,7 +86,7 @@ namespace NBass
     {
         private Error _error;
 
-        public BassException()
+        internal BassException()
             : this(GetErrorCode())
         {
         }

@@ -33,10 +33,14 @@ namespace NBass
 
         protected ChannelBase(IntPtr handle)
         {
+            if (handle == IntPtr.Zero)
+            {
+                throw new ArgumentException("The handle can not be equal zero");
+            }
+
             _handle = handle;
             _progresstimer = new Timer(20);
             _progresstimer.Elapsed += ProgressTimerElapsed;
-            _effects.CollectionChanged += _effects_CollectionChanged;
         }
 
         #endregion Ctor
@@ -57,6 +61,8 @@ namespace NBass
             Dispose(false);
         }
 
+        public bool CanPlay { get; private set; }
+
         public ChannelInfo Info
         {
             get
@@ -66,9 +72,6 @@ namespace NBass
                 return new ChannelInfo(data);
             }
         }
-
-        public bool CanPlay { get; private set; }
-
         public virtual IID3Tag TagID3
         {
             get
@@ -83,20 +86,6 @@ namespace NBass
             }
         }
 
-        /// <summary>
-        /// Translate a byte position into time (seconds)
-        /// </summary>
-        /// <param name="pos">The position to translate</param>
-        /// <returns>The millisecond position</returns>
-        protected double BytesToSeconds(long pos)
-        {
-            CheckDisposed();
-
-            var result = ChannelNativeMethods.BytesToSeconds(_handle, pos);
-            if (result < 0) throw new BassException();
-            return result;
-        }
-
         public void Dispose()
         {
             Dispose(true);
@@ -108,6 +97,7 @@ namespace NBass
         /// </summary>
         /// <param name="buffer">A buffer to place retrieved data</param>
         /// <param name="length">length in bytes</param>
+        [Obsolete]
         public int GetData(short[] buffer, int length)
         {
             CheckDisposed();
@@ -121,6 +111,7 @@ namespace NBass
         /// </summary>
         /// <param name="buffer">A buffer to place retrieved data</param>
         /// <param name="length">length in bytes</param>
+        [Obsolete]
         public int GetData(byte[] buffer, int length)
         {
             CheckDisposed();
@@ -135,6 +126,7 @@ namespace NBass
         /// </summary>
         /// <param name="buffer">A buffer to place retrieved data</param>
         /// <param name="flags">ChannelDataFlags</param>
+        [Obsolete]
         public int GetData(float[] buffer, int length)
         {
             CheckDisposed();
@@ -166,19 +158,6 @@ namespace NBass
         }
 
         /// <summary>
-        /// Translate a time (seconds) position into bytes
-        /// </summary>
-        /// <param name="pos">The position to translate</param>
-        /// <returns>The byte position</returns>
-        protected long SecondsToBytes(double pos)
-        {
-            CheckDisposed();
-            long result = ChannelNativeMethods.SecondsToBytes(_handle, pos);
-            if (result < 0) throw new BassException();
-            return result;
-        }
-
-        /// <summary>
         /// Stop a channel.
         /// </summary>
         public virtual void Stop()
@@ -194,6 +173,20 @@ namespace NBass
             BassException.ThrowIfTrue(() => !ChannelNativeMethods.RemoveLink(this.Handle, channel.Handle));
         }
 
+        /// <summary>
+        /// Translate a byte position into time (seconds)
+        /// </summary>
+        /// <param name="pos">The position to translate</param>
+        /// <returns>The millisecond position</returns>
+        protected double BytesToSeconds(long pos)
+        {
+            CheckDisposed();
+
+            var result = ChannelNativeMethods.BytesToSeconds(_handle, pos);
+            if (result < 0) throw new BassException();
+            return result;
+        }
+
         protected virtual void CheckDisposed()
         {
             if (IsDisposed)
@@ -204,6 +197,19 @@ namespace NBass
         {
             _isDisposed |= !_isDisposed;
             _progresstimer.Dispose();
+        }
+
+        /// <summary>
+        /// Translate a time (seconds) position into bytes
+        /// </summary>
+        /// <param name="pos">The position to translate</param>
+        /// <returns>The byte position</returns>
+        protected long SecondsToBytes(double pos)
+        {
+            CheckDisposed();
+            long result = ChannelNativeMethods.SecondsToBytes(_handle, pos);
+            if (result < 0) throw new BassException();
+            return result;
         }
 
         #region Properties
@@ -435,29 +441,6 @@ namespace NBass
         }
 
         #endregion Properties
-
-        private void _effects_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            //if (e.NewItems != null)
-            //{
-            //    foreach (var item in e.NewItems.OfType<IEffect>().Where(t => t != null))
-            //    {
-            //        if (_isDisposed)
-            //            throw new ObjectDisposedException(ToString());
-
-            //        IntPtr fx = _Channel.SetFX(Handle, item.Type, 1);
-            //        if (fx == IntPtr.Zero) throw new BassException();
-            //        return new FX(fx, chanfx);
-            //    }
-            //}
-            //if (e.OldItems != null)
-            //{
-            //    foreach (var item in e.OldItems.OfType<IEffect>().Where(t => t != null))
-            //    {
-            //        item.Dispose();
-            //    }
-            //}
-        }
 
         private void ProgressTimerElapsed(object sender, ElapsedEventArgs e)
         {

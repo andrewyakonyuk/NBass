@@ -9,15 +9,16 @@ namespace NBass.Tests
     [TestFixture]
     public class StreamTests
     {
-        const string MediaPath = @"..\..\Media\Maid with the Flaxen Hair.mp3";
+        string MediaPath = @"..\..\Media\Maid with the Flaxen Hair.mp3";
         BassContext _bassContext;
 
         [SetUp]
         public void Init()
         {
             var defaultDevice = new IntPtr(-1);
-            var rate = 44100;
+            int rate = 44100;
             var win = IntPtr.Zero;
+            MediaPath = System.IO.Path.GetFullPath(MediaPath);
 
             _bassContext = new BassContext(defaultDevice, rate, DeviceSetupFlags.Default, win);
         }
@@ -111,6 +112,28 @@ namespace NBass.Tests
             Assert.AreEqual(0, stream.Length.Hours);
             Assert.AreEqual(2, stream.Length.Minutes);
             Assert.AreEqual(49, stream.Length.Seconds);
+        }
+
+        [Test]
+        public void Stream_ProgressIfDisposedChannel()
+        {
+            var stream = (Stream)_bassContext.Load(MediaPath);
+            stream.Progress += stream_Progress;
+            stream.Play();
+            stream.Dispose();
+            var a = 5;
+            var b = 5;
+            var c = 5;
+            var d = 5;
+            var e = 5;
+        }
+
+        void stream_Progress(ChannelBase channel)
+        {
+            if (channel.IsDisposed)
+            {
+                var a = 5;
+            }
         }
     }
 }

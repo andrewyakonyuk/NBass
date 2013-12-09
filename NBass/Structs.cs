@@ -7,6 +7,8 @@ namespace NBass
     [Serializable]
     public sealed class ChannelInfo
     {
+        private ChannelInfo() { }
+
         internal ChannelInfo(Data a)
         {
             NumberChannels = a.b;
