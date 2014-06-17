@@ -73,14 +73,6 @@ namespace NBass.Tests
         }
 
         [Test]
-        public void Stream_Effects()
-        {
-            var stream = _bassContext.Load(MediaPath);
-
-            var effects = stream.Effects;
-        }
-
-        [Test]
         public void Stream_ActivityState()
         {
             var stream = _bassContext.Load(MediaPath);
@@ -99,7 +91,7 @@ namespace NBass.Tests
             bool isEnd = false;
             var stream = _bassContext.Load(MediaPath);
             stream.End += (sender, e) => isEnd = true;
-            stream.Position = stream.Length.Subtract(new TimeSpan( 0, 0, 2));
+            stream.Position = stream.Length.Subtract(new TimeSpan(0, 0, 2));
             stream.Play();
             Thread.Sleep(new TimeSpan(0, 0, 3));
             Assert.AreEqual(true, isEnd);

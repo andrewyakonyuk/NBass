@@ -15,7 +15,7 @@ namespace NBass.Declarations
 
         int Device { get; set; }
 
-        ICollection<IEffect> Effects { get; }
+        ICollection<EffectBase> Effects { get; }
 
         IntPtr Handle { get; }
 
@@ -40,12 +40,6 @@ namespace NBass.Declarations
         IID3Tag TagID3 { get; }
 
         float Volume { get; set; }
-
-        int GetData(byte[] buffer, int length);
-
-        int GetData(float[] buffer, int length);
-
-        int GetData(short[] buffer, int length);
 
         void Pause();
 

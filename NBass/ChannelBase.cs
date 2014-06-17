@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Timers;
 using NBass.Backstage;
@@ -16,7 +15,7 @@ namespace NBass
     {
         #region Field
 
-        private readonly ObservableCollection<IEffect> _effects = new ObservableCollection<IEffect>();
+        private readonly ObservableCollection<EffectBase> _effects = new ObservableCollection<EffectBase>();
         private readonly IntPtr _handle;
         private readonly Timer _progresstimer;
         private EventHandler _channelEnd;
@@ -72,6 +71,7 @@ namespace NBass
                 return new ChannelInfo(data);
             }
         }
+
         public virtual IID3Tag TagID3
         {
             get
@@ -92,48 +92,48 @@ namespace NBass
             GC.SuppressFinalize(this);
         }
 
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. 16-bit data
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="length">length in bytes</param>
-        [Obsolete]
-        public int GetData(short[] buffer, int length)
-        {
-            CheckDisposed();
-            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
-            if (output < 0) throw new BassException();
-            return output;
-        }
+        ///// <summary>
+        ///// Retrieves upto "length" bytes of the channel//s current sample data. 16-bit data
+        ///// </summary>
+        ///// <param name="buffer">A buffer to place retrieved data</param>
+        ///// <param name="length">length in bytes</param>
+        //[Obsolete]
+        //public int GetData(short[] buffer, int length)
+        //{
+        //    CheckDisposed();
+        //    int output = ChannelNativeMethods.GetData(Handle, buffer, length);
+        //    if (output < 0) throw new BassException();
+        //    return output;
+        //}
 
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. 8-bit data
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="length">length in bytes</param>
-        [Obsolete]
-        public int GetData(byte[] buffer, int length)
-        {
-            CheckDisposed();
-            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
-            if (output < 0) throw new BassException();
-            return output;
-        }
+        ///// <summary>
+        ///// Retrieves upto "length" bytes of the channel//s current sample data. 8-bit data
+        ///// </summary>
+        ///// <param name="buffer">A buffer to place retrieved data</param>
+        ///// <param name="length">length in bytes</param>
+        //[Obsolete]
+        //public int GetData(byte[] buffer, int length)
+        //{
+        //    CheckDisposed();
+        //    int output = ChannelNativeMethods.GetData(Handle, buffer, length);
+        //    if (output < 0) throw new BassException();
+        //    return output;
+        //}
 
-        /// <summary>
-        /// Retrieves upto "length" bytes of the channel//s current sample data. This is
-        /// useful if you wish to "visualize" the sound.
-        /// </summary>
-        /// <param name="buffer">A buffer to place retrieved data</param>
-        /// <param name="flags">ChannelDataFlags</param>
-        [Obsolete]
-        public int GetData(float[] buffer, int length)
-        {
-            CheckDisposed();
-            int output = ChannelNativeMethods.GetData(Handle, buffer, length);
-            if (output < 0) throw new BassException();
-            return output;
-        }
+        ///// <summary>
+        ///// Retrieves upto "length" bytes of the channel//s current sample data. This is
+        ///// useful if you wish to "visualize" the sound.
+        ///// </summary>
+        ///// <param name="buffer">A buffer to place retrieved data</param>
+        ///// <param name="flags">ChannelDataFlags</param>
+        //[Obsolete]
+        //public int GetData(float[] buffer, int length)
+        //{
+        //    CheckDisposed();
+        //    int output = ChannelNativeMethods.GetData(Handle, buffer, length);
+        //    if (output < 0) throw new BassException();
+        //    return output;
+        //}
 
         public void LinkTo(IChannel channel)
         {
@@ -485,7 +485,7 @@ namespace NBass
             }
         }
 
-        public ICollection<IEffect> Effects
+        public ICollection<EffectBase> Effects
         {
             get
             {
@@ -532,7 +532,7 @@ namespace NBass
             if (_channelEnd != null) _channelEnd(this, null);
         }
 
-        void OnGetSyncCallBack(IntPtr handle, IntPtr channel, int data, int user)
+        private void OnGetSyncCallBack(IntPtr handle, IntPtr channel, int data, int user)
         {
             OnEnd();
         }

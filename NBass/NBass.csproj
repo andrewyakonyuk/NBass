@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,10 +36,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -46,6 +43,7 @@
     <Compile Include="Backstage\BassExceptionNativeMethods.cs" />
     <Compile Include="Backstage\ChannelNativeMethods.cs" />
     <Compile Include="Backstage\Delegates.cs" />
+    <Compile Include="Backstage\FXNativeMethods.cs" />
     <Compile Include="Backstage\RecordNativeMethods.cs" />
     <Compile Include="Backstage\StreamNativeMethods.cs" />
     <Compile Include="Backstage\Structures.cs" />
@@ -58,13 +56,14 @@
     </Compile>
     <Compile Include="ChannelBase.cs" />
     <Compile Include="Declarations\ID3Tag.cs" />
-    <Compile Include="Declarations\IEffect.cs" />
+    <Compile Include="Declarations\EffectBase.cs" />
     <Compile Include="Declarations\IMusic.cs" />
     <Compile Include="Declarations\IPlugin.cs" />
     <Compile Include="Declarations\IRecord.cs" />
     <Compile Include="Declarations\IStream.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="Backstage\Enums.cs" />
+    <Compile Include="Effects\EchoEffect.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FX.cs" />
     <Compile Include="Backstage\Helper.cs" />
